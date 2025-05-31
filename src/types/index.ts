@@ -1,5 +1,6 @@
 
 export type Language = 'en' | 'ta' | 'hi';
+export type Theme = 'light' | 'dark';
 
 export type CategoryKey = 'daily' | 'creditCard' | 'special';
 export type SubcategoryKey = 'gift' | 'marriage' | 'birthday' | 'custom';
@@ -16,6 +17,7 @@ export interface Expense {
 
 export interface Settings {
   language: Language;
+  theme: Theme;
 }
 
 export interface Translations {
@@ -29,10 +31,10 @@ export interface LocaleData {
   navSummary: string;
   navSettings: string;
 
-  homeTitle: string; 
-  homeTotalExpenses: string; 
+  homeTitle: string;
+  homeTotalExpenses: string;
   homeCategoryBreakdown: string;
-  homeAddExpenseButton: string; 
+  homeAddExpenseButton: string;
   homeViewExpensesButton: string;
 
   homeExpensesSummaryTitle: string;
@@ -58,8 +60,9 @@ export interface LocaleData {
   addExpenseSuccessToast: string;
   customSubcategoryRequiredError: string;
   pickADatePlaceholder: string;
+  addExpenseFormSelectedDateLabel: string;
 
-  viewExpensesTitle: string; 
+  viewExpensesTitle: string;
   viewExpensesNoExpenses: string;
 
   monthlySummaryTitle: string;
@@ -78,7 +81,6 @@ export interface LocaleData {
   exportCsvSuccessMessage: string;
   exportPdfSuccessMessage: string;
 
-
   deleteConfirmationTitle: string;
   deleteConfirmationMessage: string;
   deleteConfirmationConfirmButton: string;
@@ -89,6 +91,29 @@ export interface LocaleData {
   settingsLanguageEnglish: string;
   settingsLanguageTamil: string;
   settingsLanguageHindi: string;
+  settingsPreferencesTitle: string;
+  settingsDarkModeLabel: string;
+  settingsDataManagementTitle: string;
+  settingsExportAllDataLabel: string;
+  settingsExportAllDataCsvLabel: string;
+  settingsExportAllDataPdfLabel: string;
+  settingsExportAllSuccessTitle: string;
+  settingsExportAllCsvSuccessMessage: string;
+  settingsExportAllPdfSuccessMessage: string;
+  settingsExportAllNoDataTitle: string;
+  settingsExportAllNoDataMessage: string;
+  settingsShareAppLabel: string;
+  settingsShareAppMessage: string;
+  settingsShareAppError: string;
+  settingsClearAllDataLabel: string;
+  settingsClearAllDataConfirmTitle: string;
+  settingsClearAllDataConfirmMessage: string;
+  settingsClearAllDataConfirmButton: string;
+  settingsClearAllDataCancelButton: string;
+  settingsClearAllDataSuccessToast: string;
+  settingsSupportTitle: string;
+  settingsHelpSupportLabel: string;
+  settingsHelpSupportToast: string;
 
   categoryDaily: string;
   categoryCreditCard: string;

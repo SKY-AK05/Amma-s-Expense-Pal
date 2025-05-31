@@ -1,7 +1,8 @@
+
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import type { Language, Translations } from '@/types';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import type { Language, Translations, Theme } from '@/types';
 import { translations, defaultLang } from '@/locales';
 import useLocalStorage from '@/hooks/use-local-storage';
 
@@ -12,6 +13,8 @@ interface I18nContextType {
   getLocalizedCategories: () => Record<string, string>;
   getLocalizedSubcategories: () => Record<string, string>;
   currentTranslations: Translations;
+  theme: Theme;
+  toggleTheme: () => void;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -19,17 +22,21 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export const I18nProvider = ({ children }: { children: ReactNode }) => {
   const [storedLanguage, setStoredLanguage] = useLocalStorage<Language>('app-language', defaultLang);
   const [language, setLanguageState] = useState<Language>(storedLanguage);
+  
+  const [storedTheme, setStoredTheme] = useLocalStorage<Theme>('app-theme', 'light');
+  const [theme, setThemeState] = useState<Theme>(storedTheme);
+
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    setLanguageState(storedLanguage); // Sync with localStorage on mount
-  }, [storedLanguage]);
+    setLanguageState(storedLanguage); 
+    setThemeState(storedTheme);
+  }, [storedLanguage, storedTheme]);
   
   useEffect(() => {
     if (isMounted) {
       document.documentElement.lang = language;
-      // Apply font class to body
       document.body.classList.remove('font-english', 'font-tamil', 'font-hindi');
       if (language === 'ta') {
         document.body.classList.add('font-tamil');
@@ -38,27 +45,38 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
       } else {
         document.body.classList.add('font-english');
       }
+
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
-  }, [language, isMounted]);
+  }, [language, theme, isMounted]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     setStoredLanguage(lang);
   };
 
+  const toggleTheme = useCallback(() => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setThemeState(newTheme);
+    setStoredTheme(newTheme);
+  }, [theme, setStoredTheme]);
+
   const t = (key: string, options?: Record<string, string | number>): string => {
-    if (!isMounted) return key; // Return key if not mounted to avoid hydration issues or return a loading string
+    if (!isMounted) return key; 
 
     const keys = key.split('.');
     let result: any = translations[language];
     for (const k of keys) {
       result = result?.[k];
       if (result === undefined) {
-        // Fallback to default language if key not found
         result = translations[defaultLang];
         for (const fk of keys) {
           result = result?.[fk];
-          if (result === undefined) return key; // Return key if not found in default either
+          if (result === undefined) return key; 
         }
         break;
       }
@@ -94,13 +112,12 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
   
   const currentTranslations = isMounted ? translations[language] : translations[defaultLang];
 
-
   if (!isMounted) {
-    return null; // Or a loading spinner
+    return null; 
   }
 
   return (
-    <I18nContext.Provider value={{ language, setLanguage, t, getLocalizedCategories, getLocalizedSubcategories, currentTranslations }}>
+    <I18nContext.Provider value={{ language, setLanguage, t, getLocalizedCategories, getLocalizedSubcategories, currentTranslations, theme, toggleTheme }}>
       {children}
     </I18nContext.Provider>
   );
