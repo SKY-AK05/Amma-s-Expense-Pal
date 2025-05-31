@@ -37,7 +37,7 @@ const categoryIcons: Record<CategoryKey, React.ElementType> = {
 
 const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const { addExpense, updateExpense, getExpenseById } = useExpenses();
-  const { t, language } = useI18n();
+  const { t, language, getLocalizedCategories, getLocalizedSubcategories } = useI18n();
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -131,8 +131,8 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const selectedSubcategory = watch('subcategory');
   const notesForAI = watch('notes');
 
-  const categories = useMemo(() => getLocalizedCategories(), [language, t]);
-  const subcategories = useMemo(() => getLocalizedSubcategories(), [language, t]);
+  const categories = useMemo(() => getLocalizedCategories(), [getLocalizedCategories]);
+  const subcategories = useMemo(() => getLocalizedSubcategories(), [getLocalizedSubcategories]);
 
 
   const categoryOptions = Object.entries(categories).map(([key, value]) => ({
@@ -216,20 +216,6 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
       setIsSuggesting(false);
     }
   };
-  
-  const getLocalizedCategories = () => ({
-      daily: t('categoryDaily'),
-      creditCard: t('categoryCreditCard'),
-      special: t('categorySpecial'),
-  });
-
-  const getLocalizedSubcategories = () => ({
-      gift: t('subcategoryGift'),
-      marriage: t('subcategoryMarriage'),
-      birthday: t('subcategoryBirthday'),
-      custom: t('subcategoryCustom'),
-  });
-
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
