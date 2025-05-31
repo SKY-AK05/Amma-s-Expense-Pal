@@ -5,7 +5,7 @@ export const en: Translations = {
   appName: "Amma's Expense Pal",
   navHome: 'Home',
   navAddExpense: 'Add Expense',
-  navSummary: 'Summary', // Changed from navViewExpenses
+  navSummary: 'Summary',
   navSettings: 'Settings',
 
   homeTitle: 'Monthly Summary', 
@@ -38,11 +38,9 @@ export const en: Translations = {
   customSubcategoryRequiredError: 'Custom subcategory name is required.',
   addExpenseFormSelectedDateLabel: 'Selected date: {{date}}',
 
-  // Old ViewExpensesPage keys - some are repurposed for summary
-  viewExpensesTitle: 'Monthly Summary', // Repurposed: Title for the summary page
-  viewExpensesNoExpenses: 'No expenses recorded for this month.', // Repurposed for summary context
+  viewExpensesTitle: 'Monthly Summary',
+  viewExpensesNoExpenses: 'No expenses recorded for this month.',
 
-  // New keys for Monthly Summary
   monthlySummaryTitle: 'Monthly Summary',
   monthlyOverviewTitle: 'Monthly Overview',
   expenseBreakdownTitle: 'Expense Breakdown',
@@ -51,10 +49,13 @@ export const en: Translations = {
   nextMonthAriaLabel: 'Go to next month',
   filterButtonLabel: 'Filter',
   exportButtonLabel: 'Export',
+  exportCsvButtonLabel: 'Export as CSV',
+  exportPdfButtonLabel: 'Export as PDF',
   exportNoDataTitle: 'No Data',
   exportNoDataMessage: 'There is no data to export for the selected month.',
   exportSuccessTitle: 'Exported!',
-  exportSuccessMessage: 'Monthly expenses exported to CSV.',
+  exportCsvSuccessMessage: 'Monthly expenses exported to CSV.',
+  exportPdfSuccessMessage: 'Monthly summary exported to PDF.',
 
 
   deleteConfirmationTitle: 'Confirm Deletion',

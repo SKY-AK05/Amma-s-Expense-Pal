@@ -5,7 +5,7 @@ export const ta: Translations = {
   appName: 'அம்மாவின் செலவு நண்பன்',
   navHome: 'முகப்பு',
   navAddExpense: 'செலவு சேர்',
-  navSummary: 'சுருக்கம்', // Changed from navViewExpenses
+  navSummary: 'சுருக்கம்',
   navSettings: 'அமைப்புகள்',
 
   homeTitle: 'மாதாந்திர சுருக்கம்',
@@ -38,8 +38,8 @@ export const ta: Translations = {
   customSubcategoryRequiredError: 'விருப்ப துணை வகை பெயர் தேவை.',
   addExpenseFormSelectedDateLabel: 'தேர்ந்தெடுக்கப்பட்ட தேதி: {{date}}',
 
-  viewExpensesTitle: 'மாதாந்திர சுருக்கம்', // Repurposed
-  viewExpensesNoExpenses: 'இந்த மாதத்திற்கு எந்த செலவும் பதிவு செய்யப்படவில்லை.', // Repurposed
+  viewExpensesTitle: 'மாதாந்திர சுருக்கம்',
+  viewExpensesNoExpenses: 'இந்த மாதத்திற்கு எந்த செலவும் பதிவு செய்யப்படவில்லை.',
 
   monthlySummaryTitle: 'மாதாந்திர சுருக்கம்',
   monthlyOverviewTitle: 'மாதாந்திர கண்ணோட்டம்',
@@ -49,10 +49,13 @@ export const ta: Translations = {
   nextMonthAriaLabel: 'அடுத்த மாதத்திற்குச் செல்',
   filterButtonLabel: 'வடிகட்டு',
   exportButtonLabel: 'ஏற்றுமதி',
+  exportCsvButtonLabel: 'CSV ஆக ஏற்றுமதி செய்',
+  exportPdfButtonLabel: 'PDF ஆக ஏற்றுமதி செய்',
   exportNoDataTitle: 'தரவு இல்லை',
   exportNoDataMessage: 'தேர்ந்தெடுக்கப்பட்ட மாதத்திற்கு ஏற்றுமதி செய்ய தரவு இல்லை.',
   exportSuccessTitle: 'ஏற்றுமதி செய்யப்பட்டது!',
-  exportSuccessMessage: 'மாதாந்திர செலவுகள் CSVக்கு ஏற்றுமதி செய்யப்பட்டன.',
+  exportCsvSuccessMessage: 'மாதாந்திர செலவுகள் CSVக்கு ஏற்றுமதி செய்யப்பட்டன.',
+  exportPdfSuccessMessage: 'மாதாந்திர சுருக்கம் PDFக்கு ஏற்றுமதி செய்யப்பட்டது.',
 
   deleteConfirmationTitle: 'நீக்குவதை உறுதிப்படுத்தவும்',
   deleteConfirmationMessage: 'இந்த செலவை நீக்க விரும்புகிறீர்களா? இந்த நடவடிக்கை மாற்றியமைக்க முடியாதது.',

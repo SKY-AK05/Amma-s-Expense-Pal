@@ -16,8 +16,6 @@ export interface Expense {
 
 export interface Settings {
   language: Language;
-  // reminder_enabled: boolean; // Placeholder for future
-  // backup_enabled: boolean; // Placeholder for future
 }
 
 export interface Translations {
@@ -28,9 +26,8 @@ export interface LocaleData {
   appName: string;
   navHome: string;
   navAddExpense: string;
-  navViewExpenses: string; // Will be changed to navSummary
+  navSummary: string;
   navSettings: string;
-  navSummary?: string; // New key for "Summary"
 
   homeTitle: string; 
   homeTotalExpenses: string; 
@@ -62,39 +59,24 @@ export interface LocaleData {
   customSubcategoryRequiredError: string;
   addExpenseFormSelectedDateLabel: string; 
 
-  // Keys for old ViewExpensesPage - some might be reused or removed
-  viewExpensesTitle: string; // Will be changed to monthlySummaryTitle
-  viewExpensesTableDateHeader: string;
-  viewExpensesTableAmountHeader: string;
-  viewExpensesTableCategoryHeader: string;
-  viewExpensesTableSubcategoryHeader: string;
-  viewExpensesTableNotesHeader: string;
-  viewExpensesTableActionsHeader: string;
-  viewExpensesEditButton: string;
-  viewExpensesDeleteButton: string;
-  viewExpensesExportButton: string; // Will be changed to exportButtonLabel
-  viewExpensesFilterByCategoryLabel: string;
-  viewExpensesFilterAllCategories: string;
-  viewExpensesSortByLabel: string;
-  viewExpensesSortByDate: string;
-  viewExpensesSortByAmount: string;
-  viewExpensesSortAscending: string;
-  viewExpensesSortDescending: string;
+  viewExpensesTitle: string; 
   viewExpensesNoExpenses: string;
 
-  // New keys for Monthly Summary
-  monthlySummaryTitle?: string;
-  monthlyOverviewTitle?: string;
-  expenseBreakdownTitle?: string;
-  totalExpensesLabel?: string;
-  previousMonthAriaLabel?: string;
-  nextMonthAriaLabel?: string;
-  filterButtonLabel?: string;
-  exportButtonLabel?: string;
-  exportNoDataTitle?: string;
-  exportNoDataMessage?: string;
-  exportSuccessTitle?: string;
-  exportSuccessMessage?: string;
+  monthlySummaryTitle: string;
+  monthlyOverviewTitle: string;
+  expenseBreakdownTitle: string;
+  totalExpensesLabel: string;
+  previousMonthAriaLabel: string;
+  nextMonthAriaLabel: string;
+  filterButtonLabel: string;
+  exportButtonLabel: string;
+  exportCsvButtonLabel: string;
+  exportPdfButtonLabel: string;
+  exportNoDataTitle: string;
+  exportNoDataMessage: string;
+  exportSuccessTitle: string;
+  exportCsvSuccessMessage: string;
+  exportPdfSuccessMessage: string;
 
 
   deleteConfirmationTitle: string;

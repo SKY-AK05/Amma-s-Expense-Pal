@@ -5,7 +5,7 @@ export const hi: Translations = {
   appName: 'अम्मा का खर्च दोस्त',
   navHome: 'होम',
   navAddExpense: 'खर्च जोड़ें',
-  navSummary: 'सारांश', // Changed from navViewExpenses
+  navSummary: 'सारांश',
   navSettings: 'सेटिंग्स',
 
   homeTitle: 'मासिक सारांश',
@@ -38,8 +38,8 @@ export const hi: Translations = {
   customSubcategoryRequiredError: 'कस्टम उपश्रेणी नाम आवश्यक है।',
   addExpenseFormSelectedDateLabel: 'चयनित दिनांक: {{date}}',
 
-  viewExpensesTitle: 'मासिक सारांश', // Repurposed
-  viewExpensesNoExpenses: 'इस महीने के लिए कोई खर्च दर्ज नहीं किया गया है।', // Repurposed
+  viewExpensesTitle: 'मासिक सारांश',
+  viewExpensesNoExpenses: 'इस महीने के लिए कोई खर्च दर्ज नहीं किया गया है।',
 
   monthlySummaryTitle: 'मासिक सारांश',
   monthlyOverviewTitle: 'मासिक सिंहावलोकन',
@@ -49,10 +49,13 @@ export const hi: Translations = {
   nextMonthAriaLabel: 'अगले महीने पर जाएं',
   filterButtonLabel: 'फ़िल्टर',
   exportButtonLabel: 'निर्यात',
+  exportCsvButtonLabel: 'CSV के रूप में निर्यात करें',
+  exportPdfButtonLabel: 'PDF के रूप में निर्यात करें',
   exportNoDataTitle: 'कोई डेटा नहीं',
   exportNoDataMessage: 'चयनित महीने के लिए निर्यात करने के लिए कोई डेटा नहीं है।',
   exportSuccessTitle: 'निर्यात किया गया!',
-  exportSuccessMessage: 'मासिक खर्च CSV में निर्यात किए गए।',
+  exportCsvSuccessMessage: 'मासिक खर्च CSV में निर्यात किए गए।',
+  exportPdfSuccessMessage: 'मासिक सारांश PDF में निर्यात किया गया।',
 
   deleteConfirmationTitle: 'हटाने की पुष्टि करें',
   deleteConfirmationMessage: 'क्या आप वाकई इस खर्च को हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।',
