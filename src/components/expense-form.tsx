@@ -10,17 +10,16 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useExpenses } from '@/hooks/use-expenses';
 import { useI18n } from '@/contexts/i18n-context';
 import { useToast } from '@/hooks/use-toast';
-import { CalendarIcon, Lightbulb, Loader2, CreditCard, Gift, Coffee } from 'lucide-react';
+import { Lightbulb, Loader2, CreditCard, Gift, Coffee } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import type { Locale } from 'date-fns';
 import { enUS, ta as taDateLocale, hi as hiDateLocale } from 'date-fns/locale';
 import type { Expense, CategoryKey, SubcategoryKey, Language } from '@/types';
 import { suggestExpenseCategories, SuggestExpenseCategoriesInput } from '@/ai/flows/suggest-expense-categories';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -38,7 +37,7 @@ const categoryIcons: Record<CategoryKey, React.ElementType> = {
 
 const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const { addExpense, updateExpense, getExpenseById } = useExpenses();
-  const { t, getLocalizedCategories, getLocalizedSubcategories, language } = useI18n();
+  const { t, language } = useI18n();
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -132,8 +131,9 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const selectedSubcategory = watch('subcategory');
   const notesForAI = watch('notes');
 
-  const categories = getLocalizedCategories();
-  const subcategories = getLocalizedSubcategories(); // Includes 'custom'
+  const categories = useMemo(() => getLocalizedCategories(), [language, t]);
+  const subcategories = useMemo(() => getLocalizedSubcategories(), [language, t]);
+
 
   const categoryOptions = Object.entries(categories).map(([key, value]) => ({
     value: key as CategoryKey,
@@ -142,7 +142,7 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   }));
   
   const subcategoryOptions = Object.entries(subcategories).map(([key, value]) => ({
-    value: key as SubcategoryKey, // 'custom' is a valid SubcategoryKey
+    value: key as SubcategoryKey,
     label: value,
   }));
 
@@ -216,38 +216,47 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
       setIsSuggesting(false);
     }
   };
+  
+  const getLocalizedCategories = () => ({
+      daily: t('categoryDaily'),
+      creditCard: t('categoryCreditCard'),
+      special: t('categorySpecial'),
+  });
+
+  const getLocalizedSubcategories = () => ({
+      gift: t('subcategoryGift'),
+      marriage: t('subcategoryMarriage'),
+      birthday: t('subcategoryBirthday'),
+      custom: t('subcategoryCustom'),
+  });
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label htmlFor="date" className="block text-lg font-medium mb-1">{t('addExpenseFormDateLabel')}</label>
+        <label htmlFor="date-calendar" className="block text-lg font-medium mb-1">{t('addExpenseFormDateLabel')}</label>
         <Controller
           name="date"
           control={control}
           render={({ field }) => (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal input-xl"
-                >
-                  <CalendarIcon className="mr-2 h-5 w-5" />
-                  {field.value ? format(field.value, 'PPP', { locale: dateLocales[language] }) : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={field.value instanceof Date ? field.value : undefined}
-                  onSelect={field.onChange}
-                  initialFocus
-                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                />
-              </PopoverContent>
-            </Popover>
+            <>
+              <Calendar
+                mode="single"
+                selected={field.value instanceof Date ? field.value : undefined}
+                onSelect={field.onChange}
+                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                className="rounded-md border shadow-sm mx-auto"
+                initialFocus
+              />
+              {field.value && (
+                <p className="mt-2 text-sm text-muted-foreground text-center">
+                  {t('addExpenseFormSelectedDateLabel', { date: format(field.value, 'PPP', { locale: dateLocales[language] }) })}
+                </p>
+              )}
+            </>
           )}
         />
-        {errors.date && <p className="text-destructive mt-1">{errors.date.message}</p>}
+        {errors.date && <p className="text-destructive mt-1 text-center">{errors.date.message}</p>}
       </div>
 
       <div>
@@ -302,7 +311,7 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
                   onValueChange={(value) => {
                     field.onChange(value);
                     if (value !== 'custom') {
-                      setValue('customSubcategory', undefined); // Clear custom input if not 'custom'
+                      setValue('customSubcategory', undefined);
                     }
                   }} 
                   value={field.value || ''}
@@ -367,18 +376,19 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
                 onClick={() => {
                   const lowerSuggestion = suggestion.toLowerCase();
                   let matchedCategory: CategoryKey | undefined = undefined;
-                  // Basic matching for main category
+                  
                   if (lowerSuggestion.includes('food') || lowerSuggestion.includes('grocery') || lowerSuggestion.includes('daily')) matchedCategory = 'daily';
                   else if (lowerSuggestion.includes('card') || lowerSuggestion.includes('credit')) matchedCategory = 'creditCard';
                   else if (lowerSuggestion.includes('gift') || lowerSuggestion.includes('special') || lowerSuggestion.includes('marriage') || lowerSuggestion.includes('birthday')) matchedCategory = 'special';
                   
                   if (matchedCategory) setValue('category', matchedCategory);
 
-                  if (selectedCategory === 'special') {
-                    const predefinedSubcategories = subcategoryOptions.filter(opt => opt.value !== 'custom').map(opt => opt.label.toLowerCase());
-                    if (predefinedSubcategories.includes(lowerSuggestion)) {
-                      const matchedSub = subcategoryOptions.find(opt => opt.label.toLowerCase() === lowerSuggestion);
-                      if (matchedSub) setValue('subcategory', matchedSub.value as SubcategoryKey);
+                  if (matchedCategory === 'special') { // Use matchedCategory here
+                    const predefinedSubcategoriesLabels = subcategoryOptions.filter(opt => opt.value !== 'custom').map(opt => opt.label.toLowerCase());
+                    const matchedSub = subcategoryOptions.find(opt => opt.label.toLowerCase() === lowerSuggestion);
+
+                    if (matchedSub && predefinedSubcategoriesLabels.includes(lowerSuggestion)) {
+                      setValue('subcategory', matchedSub.value as SubcategoryKey);
                     } else {
                       setValue('subcategory', 'custom');
                       setValue('customSubcategory', suggestion);
@@ -403,3 +413,4 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
 };
 
 export default ExpenseForm;
+

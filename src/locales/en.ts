@@ -8,10 +8,10 @@ export const en: Translations = {
   navViewExpenses: 'View Expenses',
   navSettings: 'Settings',
 
-  homeTitle: 'Monthly Summary', // Old, can be repurposed or removed
-  homeTotalExpenses: 'Total Expenses This Month', // Used for "This Month" in new summary
-  homeCategoryBreakdown: 'Category Breakdown', // Old
-  homeAddExpenseButton: 'Add New Expense', // Generic add button
+  homeTitle: 'Monthly Summary', 
+  homeTotalExpenses: 'Total Expenses This Month', 
+  homeCategoryBreakdown: 'Category Breakdown', 
+  homeAddExpenseButton: 'Add New Expense', 
   homeViewExpensesButton: 'View All Expenses',
 
   homeExpensesSummaryTitle: 'Expenses Summary',
@@ -36,6 +36,7 @@ export const en: Translations = {
   addExpenseFormSaveButton: 'Save Expense',
   addExpenseSuccessToast: 'Expense added successfully!',
   customSubcategoryRequiredError: 'Custom subcategory name is required.',
+  addExpenseFormSelectedDateLabel: 'Selected date: {{date}}',
 
   viewExpensesTitle: 'All Expenses',
   viewExpensesTableDateHeader: 'Date',

@@ -31,10 +31,10 @@ export interface LocaleData {
   navViewExpenses: string;
   navSettings: string;
 
-  homeTitle: string; // Kept for potential future use, not directly in new design
-  homeTotalExpenses: string; // Kept, now used for "This Month" in summary
+  homeTitle: string; 
+  homeTotalExpenses: string; 
   homeCategoryBreakdown: string;
-  homeAddExpenseButton: string; // Kept, for generic add expense
+  homeAddExpenseButton: string; 
   homeViewExpensesButton: string;
 
   homeExpensesSummaryTitle: string;
@@ -59,6 +59,7 @@ export interface LocaleData {
   addExpenseFormSaveButton: string;
   addExpenseSuccessToast: string;
   customSubcategoryRequiredError: string;
+  addExpenseFormSelectedDateLabel: string; 
 
   viewExpensesTitle: string;
   viewExpensesTableDateHeader: string;

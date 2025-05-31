@@ -36,6 +36,7 @@ export const hi: Translations = {
   addExpenseFormSaveButton: 'खर्च सहेजें',
   addExpenseSuccessToast: 'खर्च सफलतापूर्वक जोड़ा गया!',
   customSubcategoryRequiredError: 'कस्टम उपश्रेणी नाम आवश्यक है।',
+  addExpenseFormSelectedDateLabel: 'चयनित दिनांक: {{date}}',
 
   viewExpensesTitle: 'सभी खर्च',
   viewExpensesTableDateHeader: 'दिनांक',
