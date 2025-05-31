@@ -1,9 +1,10 @@
+
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, PlusCircle, ListChecks, Settings } from 'lucide-react';
+import { Home, PlusCircle, BarChart2, Settings } from 'lucide-react'; // Changed ListChecks to BarChart2
 import { useI18n } from '@/contexts/i18n-context';
 import { cn } from '@/lib/utils';
 
@@ -14,7 +15,7 @@ const Navigation = () => {
   const navItems = [
     { href: '/', labelKey: 'navHome', icon: Home },
     { href: '/add-expense', labelKey: 'navAddExpense', icon: PlusCircle },
-    { href: '/view-expenses', labelKey: 'navViewExpenses', icon: ListChecks },
+    { href: '/view-expenses', labelKey: 'navSummary', icon: BarChart2 }, // Changed labelKey and icon
     { href: '/settings', labelKey: 'navSettings', icon: Settings },
   ];
 
@@ -23,6 +24,7 @@ const Navigation = () => {
       <div className="container mx-auto flex justify-around items-center h-16">
         {navItems.map(item => {
           const isActive = pathname === item.href;
+          const IconComponent = item.icon;
           return (
             <Link href={item.href} key={item.href} legacyBehavior>
               <a
@@ -32,7 +34,7 @@ const Navigation = () => {
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >
-                <item.icon size={28} strokeWidth={isActive ? 2.5 : 2} />
+                <IconComponent size={28} strokeWidth={isActive ? 2.5 : 2} />
                 <span className="text-xs mt-1">{t(item.labelKey)}</span>
               </a>
             </Link>

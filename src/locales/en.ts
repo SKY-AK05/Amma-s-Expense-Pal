@@ -5,7 +5,7 @@ export const en: Translations = {
   appName: "Amma's Expense Pal",
   navHome: 'Home',
   navAddExpense: 'Add Expense',
-  navViewExpenses: 'View Expenses',
+  navSummary: 'Summary', // Changed from navViewExpenses
   navSettings: 'Settings',
 
   homeTitle: 'Monthly Summary', 
@@ -38,24 +38,24 @@ export const en: Translations = {
   customSubcategoryRequiredError: 'Custom subcategory name is required.',
   addExpenseFormSelectedDateLabel: 'Selected date: {{date}}',
 
-  viewExpensesTitle: 'All Expenses',
-  viewExpensesTableDateHeader: 'Date',
-  viewExpensesTableAmountHeader: 'Amount',
-  viewExpensesTableCategoryHeader: 'Category',
-  viewExpensesTableSubcategoryHeader: 'Subcategory',
-  viewExpensesTableNotesHeader: 'Notes',
-  viewExpensesTableActionsHeader: 'Actions',
-  viewExpensesEditButton: 'Edit',
-  viewExpensesDeleteButton: 'Delete',
-  viewExpensesExportButton: 'Export to CSV',
-  viewExpensesFilterByCategoryLabel: 'Filter by Category',
-  viewExpensesFilterAllCategories: 'All Categories',
-  viewExpensesSortByLabel: 'Sort by',
-  viewExpensesSortByDate: 'Date',
-  viewExpensesSortByAmount: 'Amount',
-  viewExpensesSortAscending: 'Ascending',
-  viewExpensesSortDescending: 'Descending',
-  viewExpensesNoExpenses: 'No expenses recorded yet.',
+  // Old ViewExpensesPage keys - some are repurposed for summary
+  viewExpensesTitle: 'Monthly Summary', // Repurposed: Title for the summary page
+  viewExpensesNoExpenses: 'No expenses recorded for this month.', // Repurposed for summary context
+
+  // New keys for Monthly Summary
+  monthlySummaryTitle: 'Monthly Summary',
+  monthlyOverviewTitle: 'Monthly Overview',
+  expenseBreakdownTitle: 'Expense Breakdown',
+  totalExpensesLabel: 'Total Expenses',
+  previousMonthAriaLabel: 'Go to previous month',
+  nextMonthAriaLabel: 'Go to next month',
+  filterButtonLabel: 'Filter',
+  exportButtonLabel: 'Export',
+  exportNoDataTitle: 'No Data',
+  exportNoDataMessage: 'There is no data to export for the selected month.',
+  exportSuccessTitle: 'Exported!',
+  exportSuccessMessage: 'Monthly expenses exported to CSV.',
+
 
   deleteConfirmationTitle: 'Confirm Deletion',
   deleteConfirmationMessage: 'Are you sure you want to delete this expense? This action cannot be undone.',

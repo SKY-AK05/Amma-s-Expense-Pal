@@ -28,8 +28,9 @@ export interface LocaleData {
   appName: string;
   navHome: string;
   navAddExpense: string;
-  navViewExpenses: string;
+  navViewExpenses: string; // Will be changed to navSummary
   navSettings: string;
+  navSummary?: string; // New key for "Summary"
 
   homeTitle: string; 
   homeTotalExpenses: string; 
@@ -61,7 +62,8 @@ export interface LocaleData {
   customSubcategoryRequiredError: string;
   addExpenseFormSelectedDateLabel: string; 
 
-  viewExpensesTitle: string;
+  // Keys for old ViewExpensesPage - some might be reused or removed
+  viewExpensesTitle: string; // Will be changed to monthlySummaryTitle
   viewExpensesTableDateHeader: string;
   viewExpensesTableAmountHeader: string;
   viewExpensesTableCategoryHeader: string;
@@ -70,7 +72,7 @@ export interface LocaleData {
   viewExpensesTableActionsHeader: string;
   viewExpensesEditButton: string;
   viewExpensesDeleteButton: string;
-  viewExpensesExportButton: string;
+  viewExpensesExportButton: string; // Will be changed to exportButtonLabel
   viewExpensesFilterByCategoryLabel: string;
   viewExpensesFilterAllCategories: string;
   viewExpensesSortByLabel: string;
@@ -79,6 +81,21 @@ export interface LocaleData {
   viewExpensesSortAscending: string;
   viewExpensesSortDescending: string;
   viewExpensesNoExpenses: string;
+
+  // New keys for Monthly Summary
+  monthlySummaryTitle?: string;
+  monthlyOverviewTitle?: string;
+  expenseBreakdownTitle?: string;
+  totalExpensesLabel?: string;
+  previousMonthAriaLabel?: string;
+  nextMonthAriaLabel?: string;
+  filterButtonLabel?: string;
+  exportButtonLabel?: string;
+  exportNoDataTitle?: string;
+  exportNoDataMessage?: string;
+  exportSuccessTitle?: string;
+  exportSuccessMessage?: string;
+
 
   deleteConfirmationTitle: string;
   deleteConfirmationMessage: string;

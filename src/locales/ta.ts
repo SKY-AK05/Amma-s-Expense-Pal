@@ -5,7 +5,7 @@ export const ta: Translations = {
   appName: 'அம்மாவின் செலவு நண்பன்',
   navHome: 'முகப்பு',
   navAddExpense: 'செலவு சேர்',
-  navViewExpenses: 'செலவுகளைக் காண்',
+  navSummary: 'சுருக்கம்', // Changed from navViewExpenses
   navSettings: 'அமைப்புகள்',
 
   homeTitle: 'மாதாந்திர சுருக்கம்',
@@ -38,27 +38,24 @@ export const ta: Translations = {
   customSubcategoryRequiredError: 'விருப்ப துணை வகை பெயர் தேவை.',
   addExpenseFormSelectedDateLabel: 'தேர்ந்தெடுக்கப்பட்ட தேதி: {{date}}',
 
-  viewExpensesTitle: 'அனைத்து செலவுகளும்',
-  viewExpensesTableDateHeader: 'தேதி',
-  viewExpensesTableAmountHeader: 'தொகை',
-  viewExpensesTableCategoryHeader: 'வகை',
-  viewExpensesTableSubcategoryHeader: 'துணை வகை',
-  viewExpensesTableNotesHeader: 'குறிப்புகள்',
-  viewExpensesTableActionsHeader: 'செயல்கள்',
-  viewExpensesEditButton: 'திருத்து',
-  viewExpensesDeleteButton: 'நீக்கு',
-  viewExpensesExportButton: 'CSV ஆக ஏற்றுமதி செய்',
-  viewExpensesFilterByCategoryLabel: 'வகைப்படி வடிகட்டு',
-  viewExpensesFilterAllCategories: 'அனைத்து வகைகளும்',
-  viewExpensesSortByLabel: 'வரிசைப்படுத்து',
-  viewExpensesSortByDate: 'தேதி',
-  viewExpensesSortByAmount: 'தொகை',
-  viewExpensesSortAscending: 'ஏறுவரிசை',
-  viewExpensesSortDescending: 'இறங்குவரிசை',
-  viewExpensesNoExpenses: 'இன்னும் எந்த செலவும் பதிவு செய்யப்படவில்லை.',
+  viewExpensesTitle: 'மாதாந்திர சுருக்கம்', // Repurposed
+  viewExpensesNoExpenses: 'இந்த மாதத்திற்கு எந்த செலவும் பதிவு செய்யப்படவில்லை.', // Repurposed
+
+  monthlySummaryTitle: 'மாதாந்திர சுருக்கம்',
+  monthlyOverviewTitle: 'மாதாந்திர கண்ணோட்டம்',
+  expenseBreakdownTitle: 'செலவு விவரம்',
+  totalExpensesLabel: 'மொத்த செலவுகள்',
+  previousMonthAriaLabel: 'முந்தைய மாதத்திற்குச் செல்',
+  nextMonthAriaLabel: 'அடுத்த மாதத்திற்குச் செல்',
+  filterButtonLabel: 'வடிகட்டு',
+  exportButtonLabel: 'ஏற்றுமதி',
+  exportNoDataTitle: 'தரவு இல்லை',
+  exportNoDataMessage: 'தேர்ந்தெடுக்கப்பட்ட மாதத்திற்கு ஏற்றுமதி செய்ய தரவு இல்லை.',
+  exportSuccessTitle: 'ஏற்றுமதி செய்யப்பட்டது!',
+  exportSuccessMessage: 'மாதாந்திர செலவுகள் CSVக்கு ஏற்றுமதி செய்யப்பட்டன.',
 
   deleteConfirmationTitle: 'நீக்குவதை உறுதிப்படுத்தவும்',
-  deleteConfirmationMessage: 'இந்த செலவை நீக்க விரும்புகிறீர்களா? இந்த நடவடிக்கை αναιρεிக்க முடியாதது.',
+  deleteConfirmationMessage: 'இந்த செலவை நீக்க விரும்புகிறீர்களா? இந்த நடவடிக்கை மாற்றியமைக்க முடியாதது.',
   deleteConfirmationConfirmButton: 'நீக்கு',
   deleteConfirmationCancelButton: 'ரத்துசெய்',
 

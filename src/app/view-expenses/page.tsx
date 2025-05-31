@@ -6,20 +6,14 @@ import { useExpenses } from '@/hooks/use-expenses';
 import { useI18n } from '@/contexts/i18n-context';
 import type { Expense, CategoryKey, Language } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Edit, Trash2, ArrowUpDown } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { ChevronLeft, ChevronRight, Filter, Download, BarChart2 } from 'lucide-react';
+import { format, parseISO, addMonths, subMonths, getYear, getMonth } from 'date-fns';
 import type { Locale } from 'date-fns';
 import { enUS, ta as taDateLocale, hi as hiDateLocale } from 'date-fns/locale';
-import { useRouter } from 'next/navigation';
 import { exportToCsv } from '@/utils/export';
 import { useToast } from '@/hooks/use-toast';
-
-type SortKey = 'date' | 'amount';
-type SortOrder = 'asc' | 'desc';
+import { Separator } from '@/components/ui/separator';
 
 const dateLocales: Record<Language, Locale> = {
   en: enUS,
@@ -27,171 +21,190 @@ const dateLocales: Record<Language, Locale> = {
   hi: hiDateLocale,
 };
 
-export default function ViewExpensesPage() {
-  const { expenses, deleteExpense } = useExpenses();
-  const { t, getLocalizedCategories, getLocalizedSubcategories, language } = useI18n();
-  const router = useRouter();
+interface CategorySummary {
+  key: CategoryKey;
+  name: string;
+  total: number;
+  percentage: number;
+  colorClass: string;
+}
+
+export default function MonthlySummaryPage() {
+  const { expenses } = useExpenses();
+  const { t, getLocalizedCategories, language } = useI18n();
   const { toast } = useToast();
 
-  const [filterCategory, setFilterCategory] = useState<CategoryKey | 'all'>('all');
-  const [sortKey, setSortKey] = useState<SortKey>('date');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const localizedCategories = getLocalizedCategories();
-  const localizedSubcategories = getLocalizedSubcategories();
 
   const categoryDisplay = (categoryKey: CategoryKey) => localizedCategories[categoryKey] || categoryKey;
-  const subcategoryDisplay = (subcategoryKey?: string) => {
-    if (!subcategoryKey) return '-';
-    return localizedSubcategories[subcategoryKey] || subcategoryKey; // For custom strings
-  }
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
+  };
 
-  const filteredAndSortedExpenses = useMemo(() => {
-    let result = [...expenses];
+  const goToPreviousMonth = () => {
+    setCurrentDate(prev => subMonths(prev, 1));
+  };
 
-    if (filterCategory !== 'all') {
-      result = result.filter(expense => expense.category === filterCategory);
-    }
+  const goToNextMonth = () => {
+    setCurrentDate(prev => addMonths(prev, 1));
+  };
 
-    result.sort((a, b) => {
-      let comparison = 0;
-      if (sortKey === 'date') {
-        comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
-      } else if (sortKey === 'amount') {
-        comparison = a.amount - b.amount;
-      }
-      return sortOrder === 'asc' ? comparison : -comparison;
+  const formattedCurrentMonth = useMemo(() => {
+    return format(currentDate, 'MMMM yyyy', { locale: dateLocales[language] });
+  }, [currentDate, language]);
+
+  const monthlyExpenses = useMemo(() => {
+    const targetMonth = getMonth(currentDate);
+    const targetYear = getYear(currentDate);
+    return expenses.filter(expense => {
+      const expenseDate = parseISO(expense.date);
+      return getMonth(expenseDate) === targetMonth && getYear(expenseDate) === targetYear;
+    });
+  }, [expenses, currentDate]);
+
+  const categorySummaryData = useMemo(() => {
+    const categoryTotals: Record<CategoryKey, number> = {
+      daily: 0,
+      creditCard: 0,
+      special: 0,
+    };
+
+    monthlyExpenses.forEach(expense => {
+      categoryTotals[expense.category] += expense.amount;
     });
 
-    return result;
-  }, [expenses, filterCategory, sortKey, sortOrder]);
+    const grandTotal = Object.values(categoryTotals).reduce((sum, total) => sum + total, 0);
 
-  const handleEdit = (id: string) => {
-    router.push(`/add-expense?edit=${id}`); // Or use a modal/dialog for editing
-  };
-  
-  const handleDelete = (id: string) => {
-    deleteExpense(id);
-    toast({ title: "Expense Deleted", description: "The expense has been removed."});
-  };
+    const colors: Record<CategoryKey, string> = {
+      daily: 'bg-chart-1',
+      creditCard: 'bg-chart-2',
+      special: 'bg-chart-3',
+    };
+    
+    const legendColors: Record<CategoryKey, string> = {
+      daily: 'bg-[var(--chart-1)]',
+      creditCard: 'bg-[var(--chart-2)]',
+      special: 'bg-[var(--chart-3)]',
+    };
+
+
+    const summary: CategorySummary[] = (Object.keys(categoryTotals) as CategoryKey[]).map(key => ({
+      key,
+      name: categoryDisplay(key),
+      total: categoryTotals[key],
+      percentage: grandTotal > 0 ? (categoryTotals[key] / grandTotal) * 100 : 0,
+      colorClass: colors[key],
+      legendColorClass: legendColors[key],
+    }));
+    
+    return { summary, grandTotal };
+  }, [monthlyExpenses, localizedCategories, categoryDisplay]);
+
 
   const handleExport = () => {
-    const dataToExport = filteredAndSortedExpenses.map(exp => ({
+    if (monthlyExpenses.length === 0) {
+      toast({ title: t('exportNoDataTitle'), description: t('exportNoDataMessage') });
+      return;
+    }
+    const dataToExport = monthlyExpenses.map(exp => ({
       Date: format(parseISO(exp.date), 'yyyy-MM-dd'),
       Amount: exp.amount,
       Category: categoryDisplay(exp.category),
-      Subcategory: subcategoryDisplay(exp.subcategory),
+      Subcategory: exp.subcategory || '-', // Assuming subcategoryDisplay was part of old code or needs to be adapted
       Notes: exp.notes || '',
     }));
-    exportToCsv(dataToExport, `amma-expenses-${new Date().toISOString().split('T')[0]}.csv`);
-    toast({title: "Exported!", description: "Expenses exported to CSV."});
+    exportToCsv(dataToExport, `amma-expenses-${format(currentDate, 'yyyy-MM')}.csv`);
+    toast({ title: t('exportSuccessTitle'), description: t('exportSuccessMessage') });
   };
-
-  const toggleSortOrder = () => {
-    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
-  }
-
-  const handleSortKeyChange = (key: SortKey) => {
-    if (sortKey === key) {
-      toggleSortOrder();
-    } else {
-      setSortKey(key);
-      setSortOrder('desc'); // Default to descending for new sort key
-    }
+  
+  const handleFilter = () => {
+    // Placeholder for filter functionality
+    toast({title: "Filter Clicked", description: "Filter functionality will be implemented later."});
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-16 md:pb-8"> {/* Added padding-bottom for action buttons */}
+      <div className="flex items-center justify-between">
+        <Button variant="outline" size="icon" onClick={goToPreviousMonth} aria-label={t('previousMonthAriaLabel')}>
+          <ChevronLeft className="h-6 w-6" />
+        </Button>
+        <h2 className="text-xl md:text-2xl font-semibold text-center">{formattedCurrentMonth}</h2>
+        <Button variant="outline" size="icon" onClick={goToNextMonth} aria-label={t('nextMonthAriaLabel')}>
+          <ChevronRight className="h-6 w-6" />
+        </Button>
+      </div>
+
+      {/* Monthly Overview Card */}
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl md:text-3xl font-headline">{t('viewExpensesTitle')}</CardTitle>
+          <CardTitle className="text-xl md:text-2xl font-headline">{t('monthlyOverviewTitle')}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4 mb-6 items-center">
-            <div className="flex-1 w-full md:w-auto">
-              <label className="block text-lg font-medium mb-1">{t('viewExpensesFilterByCategoryLabel')}</label>
-              <Select value={filterCategory} onValueChange={(value) => setFilterCategory(value as CategoryKey | 'all')}>
-                <SelectTrigger className="input-xl select-trigger-xl">
-                  <SelectValue placeholder={t('selectPlaceholder')} />
-                </SelectTrigger>
-                <SelectContent className="select-content-xl">
-                  <SelectItem value="all" className="select-item-xl">{t('viewExpensesFilterAllCategories')}</SelectItem>
-                  {Object.entries(localizedCategories).map(([key, value]) => (
-                    <SelectItem key={key} value={key} className="select-item-xl">{value}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        <CardContent className="space-y-3 text-lg">
+          {categorySummaryData.summary.map(cat => (
+            <div key={cat.key} className="flex justify-between items-center">
+              <span>{cat.name}</span>
+              <span className="font-medium">{formatCurrency(cat.total)}</span>
             </div>
-            <Button onClick={handleExport} variant="outline" className="w-full md:w-auto btn-xl self-end">{t('viewExpensesExportButton')}</Button>
+          ))}
+          <Separator />
+          <div className="flex justify-between items-center font-bold text-xl">
+            <span>{t('totalExpensesLabel')}</span>
+            <span>{formatCurrency(categorySummaryData.grandTotal)}</span>
           </div>
+        </CardContent>
+      </Card>
 
-          {filteredAndSortedExpenses.length === 0 ? (
-             <p className="text-center text-muted-foreground text-xl py-8">{t('viewExpensesNoExpenses')}</p>
+      {/* Expense Breakdown Card */}
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-xl md:text-2xl font-headline">{t('expenseBreakdownTitle')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {categorySummaryData.grandTotal > 0 ? (
+            <>
+              {categorySummaryData.summary.map(cat => (
+                <div key={cat.key} className="space-y-1">
+                  <div className="flex justify-between items-center text-md">
+                    <span>{cat.name}</span>
+                    <span>{cat.percentage.toFixed(0)}%</span>
+                  </div>
+                  <div className="h-3 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${cat.colorClass}`}
+                      style={{ width: `${cat.percentage}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+              <div className="flex flex-wrap gap-x-4 gap-y-2 pt-2 text-sm">
+                {categorySummaryData.summary.map(cat => (
+                  <div key={`legend-${cat.key}`} className="flex items-center gap-2">
+                    <span className={`inline-block h-3 w-3 rounded-sm ${cat.legendColorClass}`}></span>
+                    <span>{cat.name}</span>
+                  </div>
+                ))}
+              </div>
+            </>
           ) : (
-            <div className="overflow-x-auto">
-              <Table className="text-lg">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead onClick={() => handleSortKeyChange('date')} className="cursor-pointer">
-                      {t('viewExpensesTableDateHeader')} {sortKey === 'date' && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
-                    </TableHead>
-                    <TableHead onClick={() => handleSortKeyChange('amount')} className="cursor-pointer text-right">
-                      {t('viewExpensesTableAmountHeader')} {sortKey === 'amount' && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
-                    </TableHead>
-                    <TableHead>{t('viewExpensesTableCategoryHeader')}</TableHead>
-                    <TableHead>{t('viewExpensesTableSubcategoryHeader')}</TableHead>
-                    <TableHead>{t('viewExpensesTableNotesHeader')}</TableHead>
-                    <TableHead>{t('viewExpensesTableActionsHeader')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredAndSortedExpenses.map((expense) => (
-                    <TableRow key={expense.id}>
-                      <TableCell>{format(parseISO(expense.date), 'PP', { locale: dateLocales[language] })}</TableCell>
-                      <TableCell className="text-right font-medium">{new Intl.NumberFormat(undefined, { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(expense.amount)}</TableCell>
-                      <TableCell>{categoryDisplay(expense.category)}</TableCell>
-                      <TableCell>{subcategoryDisplay(expense.subcategory)}</TableCell>
-                      <TableCell className="max-w-xs truncate">{expense.notes || '-'}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                           {/* Edit functionality will be added later if time permits by prefilling ExpenseForm */}
-                           {/* <Button variant="ghost" size="icon" onClick={() => handleEdit(expense.id)} aria-label={t('viewExpensesEditButton')}>
-                            <Edit className="h-5 w-5" />
-                          </Button> */}
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" aria-label={t('viewExpensesDeleteButton')}>
-                                <Trash2 className="h-5 w-5" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>{t('deleteConfirmationTitle')}</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  {t('deleteConfirmationMessage')}
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>{t('deleteConfirmationCancelButton')}</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(expense.id)} className="bg-destructive hover:bg-destructive/90">
-                                  {t('deleteConfirmationConfirmButton')}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+             <p className="text-center text-muted-foreground text-lg py-4">{t('viewExpensesNoExpenses')}</p>
           )}
         </CardContent>
       </Card>
+      
+      {/* Action Buttons at the bottom */}
+      <div className="fixed bottom-16 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto bg-background md:bg-transparent p-4 md:p-0 border-t md:border-t-0 md:mt-6">
+        <div className="container mx-auto md:px-0 flex gap-4">
+            <Button variant="outline" className="flex-1 btn-xl" onClick={handleFilter}>
+                <Filter className="mr-2 h-5 w-5" /> {t('filterButtonLabel')}
+            </Button>
+            <Button variant="default" className="flex-1 btn-xl" onClick={handleExport}>
+                <Download className="mr-2 h-5 w-5" /> {t('exportButtonLabel')}
+            </Button>
+        </div>
+      </div>
     </div>
   );
 }
-
-    

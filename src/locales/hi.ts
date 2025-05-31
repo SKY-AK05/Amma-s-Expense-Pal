@@ -5,7 +5,7 @@ export const hi: Translations = {
   appName: 'अम्मा का खर्च दोस्त',
   navHome: 'होम',
   navAddExpense: 'खर्च जोड़ें',
-  navViewExpenses: 'खर्च देखें',
+  navSummary: 'सारांश', // Changed from navViewExpenses
   navSettings: 'सेटिंग्स',
 
   homeTitle: 'मासिक सारांश',
@@ -38,24 +38,21 @@ export const hi: Translations = {
   customSubcategoryRequiredError: 'कस्टम उपश्रेणी नाम आवश्यक है।',
   addExpenseFormSelectedDateLabel: 'चयनित दिनांक: {{date}}',
 
-  viewExpensesTitle: 'सभी खर्च',
-  viewExpensesTableDateHeader: 'दिनांक',
-  viewExpensesTableAmountHeader: 'राशि',
-  viewExpensesTableCategoryHeader: 'श्रेणी',
-  viewExpensesTableSubcategoryHeader: 'उपश्रेणी',
-  viewExpensesTableNotesHeader: 'टिप्पणियाँ',
-  viewExpensesTableActionsHeader: 'कार्रवाई',
-  viewExpensesEditButton: 'संपादित करें',
-  viewExpensesDeleteButton: 'हटाएं',
-  viewExpensesExportButton: 'CSV में निर्यात करें',
-  viewExpensesFilterByCategoryLabel: 'श्रेणी के अनुसार फ़िल्टर करें',
-  viewExpensesFilterAllCategories: 'सभी श्रेणियाँ',
-  viewExpensesSortByLabel: 'क्रमबद्ध करें',
-  viewExpensesSortByDate: 'दिनांक',
-  viewExpensesSortByAmount: 'राशि',
-  viewExpensesSortAscending: 'आरोही',
-  viewExpensesSortDescending: 'अवरोही',
-  viewExpensesNoExpenses: 'अभी तक कोई खर्च दर्ज नहीं किया गया है।',
+  viewExpensesTitle: 'मासिक सारांश', // Repurposed
+  viewExpensesNoExpenses: 'इस महीने के लिए कोई खर्च दर्ज नहीं किया गया है।', // Repurposed
+
+  monthlySummaryTitle: 'मासिक सारांश',
+  monthlyOverviewTitle: 'मासिक सिंहावलोकन',
+  expenseBreakdownTitle: 'खर्च का विवरण',
+  totalExpensesLabel: 'कुल खर्च',
+  previousMonthAriaLabel: 'पिछले महीने पर जाएं',
+  nextMonthAriaLabel: 'अगले महीने पर जाएं',
+  filterButtonLabel: 'फ़िल्टर',
+  exportButtonLabel: 'निर्यात',
+  exportNoDataTitle: 'कोई डेटा नहीं',
+  exportNoDataMessage: 'चयनित महीने के लिए निर्यात करने के लिए कोई डेटा नहीं है।',
+  exportSuccessTitle: 'निर्यात किया गया!',
+  exportSuccessMessage: 'मासिक खर्च CSV में निर्यात किए गए।',
 
   deleteConfirmationTitle: 'हटाने की पुष्टि करें',
   deleteConfirmationMessage: 'क्या आप वाकई इस खर्च को हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।',
