@@ -10,8 +10,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['PT Sans', 'sans-serif'],
+        headline: ['PT Sans', 'sans-serif'],
+        tamil: ['Noto Serif Tamil', 'serif'],
+        hindi: ['Noto Serif Devanagari', 'serif'],
         code: ['monospace'],
       },
       colors: {
