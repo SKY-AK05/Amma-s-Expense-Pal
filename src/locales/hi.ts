@@ -1,3 +1,4 @@
+
 import type { Translations } from '@/types';
 
 export const hi: Translations = {
@@ -6,11 +7,23 @@ export const hi: Translations = {
   navAddExpense: 'खर्च जोड़ें',
   navViewExpenses: 'खर्च देखें',
   navSettings: 'सेटिंग्स',
+
   homeTitle: 'मासिक सारांश',
   homeTotalExpenses: 'इस महीने का कुल खर्च',
   homeCategoryBreakdown: 'श्रेणी विश्लेषण',
   homeAddExpenseButton: 'नया खर्च जोड़ें',
   homeViewExpensesButton: 'सभी खर्च देखें',
+
+  homeExpensesSummaryTitle: 'खर्च सारांश',
+  homeTodayLabel: 'आज',
+  homeThisMonthLabel: 'इस महीने',
+  homeQuickActionsTitle: 'त्वरित कार्रवाई',
+  homeAddDailyExpenseButton: 'दैनिक खर्च जोड़ें',
+  homeAddCreditCardExpenseButton: 'क्रेडिट कार्ड खर्च जोड़ें',
+  homeAddSpecialExpenseButton: 'विशेष खर्च जोड़ें',
+  homeRecentTransactionsTitle: 'हाल के लेन-देन',
+  homeNoRecentTransactionsMessage: 'अभी तक कोई हालिया लेन-देन नहीं हुआ है।',
+
   addExpenseTitle: 'नया खर्च जोड़ें',
   addExpenseFormDateLabel: 'दिनांक',
   addExpenseFormAmountLabel: 'राशि',
@@ -21,6 +34,7 @@ export const hi: Translations = {
   addExpenseFormSuggestCategoryButton: 'श्रेणी सुझाएं (AI)',
   addExpenseFormSaveButton: 'खर्च सहेजें',
   addExpenseSuccessToast: 'खर्च सफलतापूर्वक जोड़ा गया!',
+
   viewExpensesTitle: 'सभी खर्च',
   viewExpensesTableDateHeader: 'दिनांक',
   viewExpensesTableAmountHeader: 'राशि',
@@ -39,15 +53,18 @@ export const hi: Translations = {
   viewExpensesSortAscending: 'आरोही',
   viewExpensesSortDescending: 'अवरोही',
   viewExpensesNoExpenses: 'अभी तक कोई खर्च दर्ज नहीं किया गया है।',
+
   deleteConfirmationTitle: 'हटाने की पुष्टि करें',
   deleteConfirmationMessage: 'क्या आप वाकई इस खर्च को हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।',
   deleteConfirmationConfirmButton: 'हटाएं',
   deleteConfirmationCancelButton: 'रद्द करें',
+
   settingsTitle: 'सेटिंग्स',
   settingsLanguageLabel: 'ऐप भाषा',
   settingsLanguageEnglish: 'अंग्रेजी (English)',
   settingsLanguageTamil: 'तमिल (தமிழ்)',
   settingsLanguageHindi: 'हिन्दी',
+
   categoryDaily: '🍛 दैनिक',
   categoryCreditCard: '💳 क्रेडिट कार्ड',
   categorySpecial: '🎁 विशेष',
@@ -55,6 +72,7 @@ export const hi: Translations = {
   subcategoryMarriage: 'शादी',
   subcategoryBirthday: 'जन्मदिन',
   subcategoryCustom: 'कस्टम',
+
   selectPlaceholder: 'एक विकल्प चुनें',
   aiSuggestionsTitle: 'AI श्रेणी सुझाव',
   aiSuggestionError: 'AI सुझाव प्राप्त नहीं हो सके।',

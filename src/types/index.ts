@@ -1,3 +1,4 @@
+
 export type Language = 'en' | 'ta' | 'hi';
 
 export type CategoryKey = 'daily' | 'creditCard' | 'special';
@@ -29,11 +30,23 @@ export interface LocaleData {
   navAddExpense: string;
   navViewExpenses: string;
   navSettings: string;
-  homeTitle: string;
-  homeTotalExpenses: string;
+
+  homeTitle: string; // Kept for potential future use, not directly in new design
+  homeTotalExpenses: string; // Kept, now used for "This Month" in summary
   homeCategoryBreakdown: string;
-  homeAddExpenseButton: string;
+  homeAddExpenseButton: string; // Kept, for generic add expense
   homeViewExpensesButton: string;
+
+  homeExpensesSummaryTitle: string;
+  homeTodayLabel: string;
+  homeThisMonthLabel: string;
+  homeQuickActionsTitle: string;
+  homeAddDailyExpenseButton: string;
+  homeAddCreditCardExpenseButton: string;
+  homeAddSpecialExpenseButton: string;
+  homeRecentTransactionsTitle: string;
+  homeNoRecentTransactionsMessage: string;
+
   addExpenseTitle: string;
   addExpenseFormDateLabel: string;
   addExpenseFormAmountLabel: string;
@@ -44,6 +57,7 @@ export interface LocaleData {
   addExpenseFormSuggestCategoryButton: string;
   addExpenseFormSaveButton: string;
   addExpenseSuccessToast: string;
+
   viewExpensesTitle: string;
   viewExpensesTableDateHeader: string;
   viewExpensesTableAmountHeader: string;
@@ -62,15 +76,18 @@ export interface LocaleData {
   viewExpensesSortAscending: string;
   viewExpensesSortDescending: string;
   viewExpensesNoExpenses: string;
+
   deleteConfirmationTitle: string;
   deleteConfirmationMessage: string;
   deleteConfirmationConfirmButton: string;
   deleteConfirmationCancelButton: string;
+
   settingsTitle: string;
   settingsLanguageLabel: string;
   settingsLanguageEnglish: string;
   settingsLanguageTamil: string;
   settingsLanguageHindi: string;
+
   categoryDaily: string;
   categoryCreditCard: string;
   categorySpecial: string;
@@ -78,6 +95,7 @@ export interface LocaleData {
   subcategoryMarriage: string;
   subcategoryBirthday: string;
   subcategoryCustom: string;
+
   selectPlaceholder: string;
   aiSuggestionsTitle: string;
   aiSuggestionError: string;

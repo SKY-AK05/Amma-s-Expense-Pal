@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -21,6 +21,7 @@ import { enUS, ta as taDateLocale, hi as hiDateLocale } from 'date-fns/locale';
 import type { Expense, CategoryKey, SubcategoryKey, Language } from '@/types';
 import { suggestExpenseCategories, SuggestExpenseCategoriesInput } from '@/ai/flows/suggest-expense-categories';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 const expenseSchema = z.object({
   date: z.date({ required_error: 'Date is required.' }),
@@ -33,7 +34,7 @@ const expenseSchema = z.object({
 type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 interface ExpenseFormProps {
-  expenseToEdit?: Expense;
+  // expenseToEdit is derived from query param 'edit' if present
   onSuccess?: () => void;
 }
 
@@ -43,36 +44,66 @@ const dateLocales: Record<Language, Locale> = {
   hi: hiDateLocale,
 };
 
-const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) => {
-  const { addExpense, updateExpense } = useExpenses();
+const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
+  const { addExpense, updateExpense, getExpenseById } = useExpenses();
   const { t, getLocalizedCategories, getLocalizedSubcategories, language } = useI18n();
   const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const [isSuggesting, setIsSuggesting] = useState(false);
+  
+  const [expenseToEdit, setExpenseToEdit] = useState<Expense | undefined>(undefined);
+
+  const initialCategoryFromQuery = useMemo(() => {
+    const category = searchParams.get('category');
+    if (category && ['daily', 'creditCard', 'special'].includes(category)) {
+      return category as CategoryKey;
+    }
+    return undefined;
+  }, [searchParams]);
+
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (editId) {
+      const expense = getExpenseById(editId);
+      setExpenseToEdit(expense);
+    } else {
+      setExpenseToEdit(undefined);
+    }
+  }, [searchParams, getExpenseById]);
 
 
-  const defaultValues = expenseToEdit
-    ? {
+  const defaultValues = useMemo(() => {
+    if (expenseToEdit) {
+      return {
         date: parseISO(expenseToEdit.date),
         amount: expenseToEdit.amount,
         category: expenseToEdit.category,
         subcategory: expenseToEdit.subcategory,
-        notes: expenseToEdit.notes,
-      }
-    : {
-        date: new Date(),
-        amount: undefined,
-        category: undefined,
-        subcategory: undefined,
-        notes: '',
+        notes: expenseToEdit.notes || '',
       };
+    }
+    return {
+      date: new Date(),
+      amount: undefined,
+      category: initialCategoryFromQuery,
+      subcategory: undefined,
+      notes: '',
+    };
+  }, [expenseToEdit, initialCategoryFromQuery]);
 
-  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<ExpenseFormData>({
+  const { control, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
     defaultValues,
   });
+  
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues, reset]);
+
 
   const selectedCategory = watch('category');
   const notesForAI = watch('notes');
@@ -86,7 +117,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
   }));
 
   const subcategoryOptions = Object.entries(subcategories)
-    .filter(([key]) => key !== 'custom') // 'custom' might be handled differently or just be a string
+    .filter(([key]) => key !== 'custom') 
     .map(([key, value]) => ({
       value: key as SubcategoryKey,
       label: value,
@@ -103,20 +134,26 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
     try {
       if (expenseToEdit) {
         updateExpense(expenseToEdit.id, expensePayload);
+        toast({ title: t('addExpenseSuccessToast').replace('added', 'updated') }); 
+        router.push('/view-expenses'); // Redirect after editing
       } else {
         addExpense(expensePayload);
+        toast({ title: t('addExpenseSuccessToast') });
+        // Reset form, preserving query category if present
+        const resetCategory = initialCategoryFromQuery && ['daily', 'creditCard', 'special'].includes(initialCategoryFromQuery)
+          ? initialCategoryFromQuery
+          : undefined;
+        reset({
+          date: new Date(),
+          amount: undefined,
+          category: resetCategory,
+          subcategory: undefined,
+          notes: '',
+        });
+        setAiSuggestions([]);
       }
-      toast({ title: t('addExpenseSuccessToast') });
-      if (onSuccess) onSuccess();
-      // Reset form if not editing
-      if (!expenseToEdit) {
-         setValue('date', new Date());
-         setValue('amount', 0);
-         setValue('category', 'daily');
-         setValue('subcategory', undefined);
-         setValue('notes', '');
-         setAiSuggestions([]);
-      }
+      if (onSuccess && !expenseToEdit) onSuccess(); // onSuccess typically for non-edit scenarios or modal close
+      
     } catch (error) {
       console.error("Failed to save expense", error);
       toast({ title: "Error", description: "Failed to save expense.", variant: "destructive" });
@@ -169,7 +206,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
               <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
-                  selected={field.value}
+                  selected={field.value instanceof Date ? field.value : undefined}
                   onSelect={field.onChange}
                   initialFocus
                   disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
@@ -186,7 +223,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
         <Controller
           name="amount"
           control={control}
-          render={({ field }) => <Input {...field} type="number" step="0.01" className="input-xl" onChange={e => field.onChange(parseFloat(e.target.value))}/>}
+          render={({ field }) => <Input {...field} type="number" placeholder="0.00" step="0.01" className="input-xl" value={field.value === undefined ? '' : field.value} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}/>}
         />
         {errors.amount && <p className="text-destructive mt-1">{errors.amount.message}</p>}
       </div>
@@ -197,7 +234,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
           name="category"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value || ''} >
               <SelectTrigger className="input-xl select-trigger-xl">
                 <SelectValue placeholder={t('selectPlaceholder')} />
               </SelectTrigger>
@@ -219,7 +256,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
             name="subcategory"
             control={control}
             render={({ field }) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+              <Select onValueChange={field.onChange} value={field.value || ''}>
                 <SelectTrigger className="input-xl select-trigger-xl">
                   <SelectValue placeholder={t('selectPlaceholder')} />
                 </SelectTrigger>
@@ -231,7 +268,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
               </Select>
             )}
           />
-          {/* Add input for custom subcategory if needed */}
         </div>
       )}
       
@@ -243,6 +279,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
           render={({ field }) => (
             <Textarea
               {...field}
+              value={field.value || ''}
               placeholder={t('addExpenseFormNotesPlaceholder')}
               className="min-h-[100px] text-lg"
             />
@@ -265,7 +302,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
                 variant="ghost"
                 className="w-full justify-start text-lg"
                 onClick={() => {
-                  // Heuristic to map suggestion to existing categories
                   const lowerSuggestion = suggestion.toLowerCase();
                   let matchedCategory: CategoryKey | undefined = undefined;
                   if (lowerSuggestion.includes('food') || lowerSuggestion.includes('grocery') || lowerSuggestion.includes('daily')) matchedCategory = 'daily';
@@ -274,7 +310,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
                   
                   if (matchedCategory) setValue('category', matchedCategory);
                   else {
-                     // if no direct match, try to set as notes or a custom subcategory if 'special' is chosen
                      if (selectedCategory === 'special') setValue('subcategory', suggestion);
                   }
                   toast({ title: `Set category based on: ${suggestion}` });
@@ -289,12 +324,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
 
       <Button type="submit" className="w-full btn-xl" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-        {t('addExpenseFormSaveButton')}
+        {expenseToEdit ? t('addExpenseFormSaveButton').replace("Save", "Update") : t('addExpenseFormSaveButton')}
       </Button>
     </form>
   );
 };
 
 export default ExpenseForm;
-
-    

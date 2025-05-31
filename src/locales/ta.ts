@@ -1,3 +1,4 @@
+
 import type { Translations } from '@/types';
 
 export const ta: Translations = {
@@ -6,11 +7,23 @@ export const ta: Translations = {
   navAddExpense: 'செலவு சேர்',
   navViewExpenses: 'செலவுகளைக் காண்',
   navSettings: 'அமைப்புகள்',
+
   homeTitle: 'மாதாந்திர சுருக்கம்',
   homeTotalExpenses: 'இந்த மாத மொத்த செலவுகள்',
   homeCategoryBreakdown: 'வகை வாரியான விவரம்',
   homeAddExpenseButton: 'புதிய செலவைச் சேர்',
   homeViewExpensesButton: 'அனைத்து செலவுகளையும் காண்',
+
+  homeExpensesSummaryTitle: 'செலவுச் சுருக்கம்',
+  homeTodayLabel: 'இன்று',
+  homeThisMonthLabel: 'இந்த மாதம்',
+  homeQuickActionsTitle: 'விரைவுச் செயல்கள்',
+  homeAddDailyExpenseButton: 'தினசரி செலவைச் சேர்',
+  homeAddCreditCardExpenseButton: 'கடன் அட்டை செலவைச் சேர்',
+  homeAddSpecialExpenseButton: 'சிறப்புச் செலவைச் சேர்',
+  homeRecentTransactionsTitle: 'சமீபத்திய பரிவர்த்தனைகள்',
+  homeNoRecentTransactionsMessage: 'சமீபத்தில் எந்த பரிவர்த்தனைகளும் இல்லை.',
+
   addExpenseTitle: 'புதிய செலவைச் சேர்',
   addExpenseFormDateLabel: 'தேதி',
   addExpenseFormAmountLabel: 'தொகை',
@@ -21,6 +34,7 @@ export const ta: Translations = {
   addExpenseFormSuggestCategoryButton: 'வகை பரிந்துரை (AI)',
   addExpenseFormSaveButton: 'செலவை சேமி',
   addExpenseSuccessToast: 'செலவு வெற்றிகரமாக சேர்க்கப்பட்டது!',
+
   viewExpensesTitle: 'அனைத்து செலவுகளும்',
   viewExpensesTableDateHeader: 'தேதி',
   viewExpensesTableAmountHeader: 'தொகை',
@@ -39,15 +53,18 @@ export const ta: Translations = {
   viewExpensesSortAscending: 'ஏறுவரிசை',
   viewExpensesSortDescending: 'இறங்குவரிசை',
   viewExpensesNoExpenses: 'இன்னும் எந்த செலவும் பதிவு செய்யப்படவில்லை.',
+
   deleteConfirmationTitle: 'நீக்குவதை உறுதிப்படுத்தவும்',
   deleteConfirmationMessage: 'இந்த செலவை நீக்க விரும்புகிறீர்களா? இந்த நடவடிக்கை αναιρεிக்க முடியாதது.',
   deleteConfirmationConfirmButton: 'நீக்கு',
   deleteConfirmationCancelButton: 'ரத்துசெய்',
+
   settingsTitle: 'அமைப்புகள்',
   settingsLanguageLabel: 'பயன்பாட்டு மொழி',
   settingsLanguageEnglish: 'ஆங்கிலம் (English)',
   settingsLanguageTamil: 'தமிழ்',
   settingsLanguageHindi: 'ஹிந்தி (हिन्दी)',
+
   categoryDaily: '🍛 தினசரி',
   categoryCreditCard: '💳 கடன் அட்டை',
   categorySpecial: '🎁 சிறப்பு',
@@ -55,6 +72,7 @@ export const ta: Translations = {
   subcategoryMarriage: 'திருமணம்',
   subcategoryBirthday: 'பிறந்தநாள்',
   subcategoryCustom: 'விருப்பம்',
+
   selectPlaceholder: 'ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும்',
   aiSuggestionsTitle: 'AI வகை பரிந்துரைகள்',
   aiSuggestionError: 'AI பரிந்துரைகளைப் பெற முடியவில்லை.',
