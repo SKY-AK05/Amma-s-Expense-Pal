@@ -27,7 +27,8 @@ export interface Translations {
 export interface LocaleData {
   appName: string;
   navHome: string;
-  navAddExpense: string;
+  navAddExpense: string; // Will be changed to navExpenses but keeping for now if any direct use
+  navExpenses: string; // New key
   navSummary: string;
   navSettings: string;
 
@@ -48,6 +49,7 @@ export interface LocaleData {
   homeNoRecentTransactionsMessage: string;
 
   addExpenseTitle: string;
+  editExpenseTitle: string; // New key
   addExpenseFormDateLabel: string;
   addExpenseFormAmountLabel: string;
   addExpenseFormCategoryLabel: string;
@@ -55,13 +57,12 @@ export interface LocaleData {
   addExpenseFormCustomSubcategoryLabel: string;
   addExpenseFormNotesLabel: string;
   addExpenseFormNotesPlaceholder: string;
-  addExpenseFormRefineNotesButton: string; // Changed from addExpenseFormSuggestCategoryButton
+  addExpenseFormRefineNotesButton: string;
   addExpenseFormSaveButton: string;
   updateWord: string;
   addExpenseSuccessToast: string;
   customSubcategoryRequiredError: string;
   pickADatePlaceholder: string;
-
 
   viewExpensesTitle: string;
   viewExpensesNoExpenses: string;
@@ -82,6 +83,15 @@ export interface LocaleData {
   exportCsvSuccessMessage: string;
   exportPdfSuccessMessage: string;
 
+  expensesAddNewButton: string; // New key
+  expensesFilterTitle: string; // New key
+  expensesFilterAll: string; // New key
+  modifyButtonLabel: string; // New key
+  deleteButtonLabel: string; // New key
+  expensesNoExpensesForFilterMessage: string; // New key
+  expensesShowAllButton: string; // New key
+  deleteExpenseSuccessToastTitle: string; // New key
+  deleteExpenseSuccessToastMessage: string; // New key
 
   deleteConfirmationTitle: string;
   deleteConfirmationMessage: string;

@@ -4,7 +4,8 @@ import type { Translations } from '@/types';
 export const hi: Translations = {
   appName: 'अम्मा का खर्च दोस्त',
   navHome: 'होम',
-  navAddExpense: 'खर्च जोड़ें',
+  navAddExpense: 'खर्च जोड़ें', // Old key
+  navExpenses: 'खर्च', // New nav label
   navSummary: 'सारांश',
   navSettings: 'सेटिंग्स',
 
@@ -25,6 +26,7 @@ export const hi: Translations = {
   homeNoRecentTransactionsMessage: 'अभी तक कोई हालिया लेन-देन नहीं हुआ है।',
 
   addExpenseTitle: 'नया खर्च जोड़ें',
+  editExpenseTitle: 'खर्च संपादित करें',
   addExpenseFormDateLabel: 'दिनांक',
   addExpenseFormAmountLabel: 'राशि',
   addExpenseFormCategoryLabel: 'श्रेणी',
@@ -57,6 +59,16 @@ export const hi: Translations = {
   exportSuccessTitle: 'निर्यात किया गया!',
   exportCsvSuccessMessage: 'मासिक खर्च CSV में निर्यात किए गए।',
   exportPdfSuccessMessage: 'मासिक सारांश PDF में निर्यात किया गया।',
+
+  expensesAddNewButton: 'नया खर्च जोड़ें',
+  expensesFilterTitle: 'खर्च फ़िल्टर करें',
+  expensesFilterAll: 'सभी',
+  modifyButtonLabel: 'संशोधित करें',
+  deleteButtonLabel: 'हटाएं',
+  expensesNoExpensesForFilterMessage: 'वर्तमान फ़िल्टर से कोई खर्च मेल नहीं खाता।',
+  expensesShowAllButton: 'सभी खर्च दिखाएं',
+  deleteExpenseSuccessToastTitle: 'खर्च हटा दिया गया',
+  deleteExpenseSuccessToastMessage: '{{amount}} का {{category}} खर्च सफलतापूर्वक हटा दिया गया।',
 
   deleteConfirmationTitle: 'हटाने की पुष्टि करें',
   deleteConfirmationMessage: 'क्या आप वाकई इस खर्च को हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।',
@@ -91,7 +103,6 @@ export const hi: Translations = {
   settingsSupportTitle: 'समर्थन',
   settingsHelpSupportLabel: 'सहायता और समर्थन',
   settingsHelpSupportToast: 'सहायता और समर्थन सुविधा जल्द ही आ रही है! अभी के लिए, ऐप का अन्वेषण करें या Firebase Studio के साथ पुनर्निर्माण करें।',
-
 
   categoryDaily: '🍛 दैनिक',
   categoryCreditCard: '💳 क्रेडिट कार्ड',

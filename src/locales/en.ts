@@ -4,7 +4,8 @@ import type { Translations } from '@/types';
 export const en: Translations = {
   appName: "Amma's Expense Pal",
   navHome: 'Home',
-  navAddExpense: 'Add Expense',
+  navAddExpense: 'Add Expense', // Old key, will be replaced by navExpenses in usage
+  navExpenses: 'Expenses', // New nav label
   navSummary: 'Summary',
   navSettings: 'Settings',
 
@@ -25,6 +26,7 @@ export const en: Translations = {
   homeNoRecentTransactionsMessage: 'No recent transactions yet.',
 
   addExpenseTitle: 'Add New Expense',
+  editExpenseTitle: 'Edit Expense',
   addExpenseFormDateLabel: 'Date',
   addExpenseFormAmountLabel: 'Amount',
   addExpenseFormCategoryLabel: 'Category',
@@ -38,7 +40,6 @@ export const en: Translations = {
   addExpenseSuccessToast: 'Expense added successfully!',
   customSubcategoryRequiredError: 'Custom subcategory name is required.',
   pickADatePlaceholder: 'Pick a date',
-
 
   viewExpensesTitle: 'Monthly Summary',
   viewExpensesNoExpenses: 'No expenses recorded for this month.',
@@ -59,6 +60,15 @@ export const en: Translations = {
   exportCsvSuccessMessage: 'Monthly expenses exported to CSV.',
   exportPdfSuccessMessage: 'Monthly summary exported to PDF.',
 
+  expensesAddNewButton: 'Add New Expense',
+  expensesFilterTitle: 'Filter Expenses',
+  expensesFilterAll: 'All',
+  modifyButtonLabel: 'Modify',
+  deleteButtonLabel: 'Delete',
+  expensesNoExpensesForFilterMessage: 'No expenses match the current filter.',
+  expensesShowAllButton: 'Show all expenses',
+  deleteExpenseSuccessToastTitle: 'Expense Deleted',
+  deleteExpenseSuccessToastMessage: 'The {{category}} expense of {{amount}} was successfully deleted.',
 
   deleteConfirmationTitle: 'Confirm Deletion',
   deleteConfirmationMessage: 'Are you sure you want to delete this expense? This action cannot be undone.',
@@ -93,7 +103,6 @@ export const en: Translations = {
   settingsSupportTitle: 'Support',
   settingsHelpSupportLabel: 'Help & Support',
   settingsHelpSupportToast: 'Help & Support feature coming soon! For now, explore the app or rebuild with Firebase Studio.',
-
 
   categoryDaily: '🍛 Daily',
   categoryCreditCard: '💳 Credit Card',

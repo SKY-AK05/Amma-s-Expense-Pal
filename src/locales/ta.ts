@@ -4,7 +4,8 @@ import type { Translations } from '@/types';
 export const ta: Translations = {
   appName: 'அம்மாவின் செலவு நண்பன்',
   navHome: 'முகப்பு',
-  navAddExpense: 'செலவு சேர்',
+  navAddExpense: 'செலவு சேர்', // Old key
+  navExpenses: 'செலவுகள்', // New nav label
   navSummary: 'சுருக்கம்',
   navSettings: 'அமைப்புகள்',
 
@@ -25,6 +26,7 @@ export const ta: Translations = {
   homeNoRecentTransactionsMessage: 'சமீபத்தில் எந்த பரிவர்த்தனைகளும் இல்லை.',
 
   addExpenseTitle: 'புதிய செலவைச் சேர்',
+  editExpenseTitle: 'செலவைத் திருத்து',
   addExpenseFormDateLabel: 'தேதி',
   addExpenseFormAmountLabel: 'தொகை',
   addExpenseFormCategoryLabel: 'வகை',
@@ -57,6 +59,16 @@ export const ta: Translations = {
   exportSuccessTitle: 'ஏற்றுமதி செய்யப்பட்டது!',
   exportCsvSuccessMessage: 'மாதாந்திர செலவுகள் CSVக்கு ஏற்றுமதி செய்யப்பட்டன.',
   exportPdfSuccessMessage: 'மாதாந்திர சுருக்கம் PDFக்கு ஏற்றுமதி செய்யப்பட்டது.',
+
+  expensesAddNewButton: 'புதிய செலவைச் சேர்',
+  expensesFilterTitle: 'செலவுகளை வடிகட்டு',
+  expensesFilterAll: 'அனைத்தும்',
+  modifyButtonLabel: 'மாற்று',
+  deleteButtonLabel: 'நீக்கு',
+  expensesNoExpensesForFilterMessage: 'தற்போதைய வடிகட்டிக்கு எந்த செலவும் பொருந்தவில்லை.',
+  expensesShowAllButton: 'அனைத்து செலவுகளையும் காட்டு',
+  deleteExpenseSuccessToastTitle: 'செலவு நீக்கப்பட்டது',
+  deleteExpenseSuccessToastMessage: '{{amount}} மதிப்புள்ள {{category}} செலவு வெற்றிகரமாக நீக்கப்பட்டது.',
 
   deleteConfirmationTitle: 'நீக்குவதை உறுதிப்படுத்தவும்',
   deleteConfirmationMessage: 'இந்த செலவை நீக்க விரும்புகிறீர்களா? இந்த நடவடிக்கை மாற்றியமைக்க முடியாதது.',
