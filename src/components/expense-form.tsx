@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useExpenses } from '@/hooks/use-expenses';
 import { useI18n } from '@/contexts/i18n-context';
 import { useToast } from '@/hooks/use-toast';
-import { CalendarIcon, Lightbulb, Loader2 } from 'lucide-react';
+import { CalendarIcon, Lightbulb, Loader2, CreditCard, Gift, Coffee } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import type { Locale } from 'date-fns';
 import { enUS, ta as taDateLocale, hi as hiDateLocale } from 'date-fns/locale';
@@ -22,6 +22,7 @@ import type { Expense, CategoryKey, SubcategoryKey, Language } from '@/types';
 import { suggestExpenseCategories, SuggestExpenseCategoriesInput } from '@/ai/flows/suggest-expense-categories';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 const expenseSchema = z.object({
   date: z.date({ required_error: 'Date is required.' }),
@@ -34,7 +35,6 @@ const expenseSchema = z.object({
 type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 interface ExpenseFormProps {
-  // expenseToEdit is derived from query param 'edit' if present
   onSuccess?: () => void;
 }
 
@@ -42,6 +42,12 @@ const dateLocales: Record<Language, Locale> = {
   en: enUS,
   ta: taDateLocale,
   hi: hiDateLocale,
+};
+
+const categoryIcons: Record<CategoryKey, React.ElementType> = {
+  daily: Coffee,
+  creditCard: CreditCard,
+  special: Gift,
 };
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
@@ -114,6 +120,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
   const categoryOptions = Object.entries(categories).map(([key, value]) => ({
     value: key as CategoryKey,
     label: value,
+    Icon: categoryIcons[key as CategoryKey],
   }));
 
   const subcategoryOptions = Object.entries(subcategories)
@@ -135,11 +142,11 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
       if (expenseToEdit) {
         updateExpense(expenseToEdit.id, expensePayload);
         toast({ title: t('addExpenseSuccessToast').replace('added', 'updated') }); 
-        router.push('/view-expenses'); // Redirect after editing
+        router.push('/view-expenses'); 
       } else {
         addExpense(expensePayload);
         toast({ title: t('addExpenseSuccessToast') });
-        // Reset form, preserving query category if present
+        
         const resetCategory = initialCategoryFromQuery && ['daily', 'creditCard', 'special'].includes(initialCategoryFromQuery)
           ? initialCategoryFromQuery
           : undefined;
@@ -152,7 +159,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
         });
         setAiSuggestions([]);
       }
-      if (onSuccess && !expenseToEdit) onSuccess(); // onSuccess typically for non-edit scenarios or modal close
+      if (onSuccess && !expenseToEdit) onSuccess(); 
       
     } catch (error) {
       console.error("Failed to save expense", error);
@@ -229,23 +236,31 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
       </div>
 
       <div>
-        <label htmlFor="category" className="block text-lg font-medium mb-1">{t('addExpenseFormCategoryLabel')}</label>
-        <Controller
-          name="category"
-          control={control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value || ''} >
-              <SelectTrigger className="input-xl select-trigger-xl">
-                <SelectValue placeholder={t('selectPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent className="select-content-xl">
-                {categoryOptions.map(opt => (
-                  <SelectItem key={opt.value} value={opt.value} className="select-item-xl">{opt.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
+        <label className="block text-lg font-medium mb-1">{t('addExpenseFormCategoryLabel')}</label>
+        <div className="grid grid-cols-3 gap-2">
+          {categoryOptions.map((opt) => {
+            const Icon = opt.Icon || Coffee; // Default to Coffee if no icon
+            return (
+            <Button
+              key={opt.value}
+              type="button"
+              variant={selectedCategory === opt.value ? 'default' : 'outline'}
+              onClick={() => {
+                setValue('category', opt.value, { shouldValidate: true });
+                if (opt.value !== 'special') {
+                  setValue('subcategory', undefined); // Clear subcategory if not 'special'
+                }
+              }}
+              className={cn("btn-xl justify-start text-left h-auto py-3", 
+                           selectedCategory === opt.value ? "ring-2 ring-primary-foreground ring-offset-2 ring-offset-primary" : ""
+              )}
+            >
+              <Icon className="mr-2 h-6 w-6" />
+              <span className="flex-1">{opt.label}</span>
+            </Button>
+          );
+        })}
+        </div>
         {errors.category && <p className="text-destructive mt-1">{errors.category.message}</p>}
       </div>
 
