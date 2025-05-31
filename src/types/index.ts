@@ -55,12 +55,13 @@ export interface LocaleData {
   addExpenseFormCustomSubcategoryLabel: string;
   addExpenseFormNotesLabel: string;
   addExpenseFormNotesPlaceholder: string;
-  addExpenseFormSuggestCategoryButton: string;
+  addExpenseFormRefineNotesButton: string; // Changed from addExpenseFormSuggestCategoryButton
   addExpenseFormSaveButton: string;
+  updateWord: string;
   addExpenseSuccessToast: string;
   customSubcategoryRequiredError: string;
   pickADatePlaceholder: string;
-  addExpenseFormSelectedDateLabel: string;
+
 
   viewExpensesTitle: string;
   viewExpensesNoExpenses: string;
@@ -80,6 +81,7 @@ export interface LocaleData {
   exportSuccessTitle: string;
   exportCsvSuccessMessage: string;
   exportPdfSuccessMessage: string;
+
 
   deleteConfirmationTitle: string;
   deleteConfirmationMessage: string;
@@ -124,6 +126,8 @@ export interface LocaleData {
   subcategoryCustom: string;
 
   selectPlaceholder: string;
-  aiSuggestionsTitle: string;
-  aiSuggestionError: string;
+  aiRefineNotesError: string;
+  aiRefineNotesSuccess: string;
+  aiRefineNotesInfoMissing: string;
+  aiRefineNotesInfoMissingDescription: string;
 }

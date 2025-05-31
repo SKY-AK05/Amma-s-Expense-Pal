@@ -32,12 +32,12 @@ export const ta: Translations = {
   addExpenseFormCustomSubcategoryLabel: 'விருப்ப துணை வகை பெயர்',
   addExpenseFormNotesLabel: 'குறிப்புகள்',
   addExpenseFormNotesPlaceholder: 'இந்த செலவிற்கான குறிப்புகளை உள்ளிடவும்...',
-  addExpenseFormSuggestCategoryButton: 'வகை பரிந்துரை (AI)',
+  addExpenseFormRefineNotesButton: 'குறிப்புகளை மேம்படுத்து (AI)',
   addExpenseFormSaveButton: 'செலவை சேமி',
+  updateWord: 'புதுப்பி',
   addExpenseSuccessToast: 'செலவு வெற்றிகரமாக சேர்க்கப்பட்டது!',
   customSubcategoryRequiredError: 'விருப்ப துணை வகை பெயர் தேவை.',
   pickADatePlaceholder: 'தேதியைத் தேர்ந்தெடுக்கவும்',
-  addExpenseFormSelectedDateLabel: 'தேர்ந்தெடுத்த தேதி: {{date}}',
 
   viewExpensesTitle: 'மாதாந்திர சுருக்கம்',
   viewExpensesNoExpenses: 'இந்த மாதத்திற்கு எந்த செலவும் பதிவு செய்யப்படவில்லை.',
@@ -101,6 +101,8 @@ export const ta: Translations = {
   subcategoryCustom: 'விருப்பம்...',
 
   selectPlaceholder: 'ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும்',
-  aiSuggestionsTitle: 'AI வகை பரிந்துரைகள்',
-  aiSuggestionError: 'AI பரிந்துரைகளைப் பெற முடியவில்லை.',
+  aiRefineNotesError: 'AI மூலம் குறிப்புகளை மேம்படுத்த முடியவில்லை.',
+  aiRefineNotesSuccess: 'AI மூலம் குறிப்புகள் மேம்படுத்தப்பட்டன!',
+  aiRefineNotesInfoMissing: 'முதலில் சில குறிப்புகளை உள்ளிடவும்!',
+  aiRefineNotesInfoMissingDescription: 'AI மூலம் மேம்படுத்துவதற்கு முன், சில ஆரம்ப குறிப்புகளை எழுதவும்.',
 };

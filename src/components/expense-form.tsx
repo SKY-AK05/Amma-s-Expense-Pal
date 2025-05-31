@@ -14,13 +14,12 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { useExpenses } from '@/hooks/use-expenses';
 import { useI18n } from '@/contexts/i18n-context';
 import { useToast } from '@/hooks/use-toast';
-import { Lightbulb, Loader2, CreditCard, Gift, Coffee, CalendarIcon } from 'lucide-react';
+import { Lightbulb, Loader2, CreditCard, Gift, Coffee, CalendarIcon, Sparkles } from 'lucide-react'; // Added Sparkles
 import { format, parseISO } from 'date-fns';
 import type { Locale } from 'date-fns';
 import { enUS, ta as taDateLocale, hi as hiDateLocale } from 'date-fns/locale';
 import type { Expense, CategoryKey, SubcategoryKey, Language } from '@/types';
-import { suggestExpenseCategories, SuggestExpenseCategoriesInput } from '@/ai/flows/suggest-expense-categories';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { refineExpenseNotes, RefineExpenseNotesInput } from '@/ai/flows/refine-expense-notes';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -65,8 +64,7 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   type ExpenseFormData = z.infer<typeof expenseSchema>;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
-  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [isRefiningNotes, setIsRefiningNotes] = useState(false);
   const [expenseToEdit, setExpenseToEdit] = useState<Expense | undefined>(undefined);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -91,7 +89,7 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const defaultValues = useMemo(() => {
     if (expenseToEdit) {
       const isPredefinedSubcategory = expenseToEdit.subcategory && 
-        ['gift', 'marriage', 'birthday'].includes(expenseToEdit.subcategory as SubcategoryKey);
+        Object.keys(getLocalizedSubcategories()).includes(expenseToEdit.subcategory as SubcategoryKey) && expenseToEdit.subcategory !== 'custom';
       
       const subCatValue = expenseToEdit.category === 'special' 
         ? (isPredefinedSubcategory ? expenseToEdit.subcategory : 'custom')
@@ -118,9 +116,9 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
       customSubcategory: undefined,
       notes: '',
     };
-  }, [expenseToEdit, initialCategoryFromQuery]);
+  }, [expenseToEdit, initialCategoryFromQuery, getLocalizedSubcategories]);
 
-  const { control, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm<ExpenseFormData>({
+  const { control, handleSubmit, watch, setValue, formState: { errors }, reset, getValues } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
     defaultValues,
   });
@@ -131,10 +129,9 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
 
   const selectedCategory = watch('category');
   const selectedSubcategory = watch('subcategory');
-  const notesForAI = watch('notes');
 
-  const categories = useMemo(() => getLocalizedCategories(), [getLocalizedCategories]);
-  const subcategories = useMemo(() => getLocalizedSubcategories(), [getLocalizedSubcategories]);
+  const categories = useMemo(() => getLocalizedCategories(), [getLocalizedCategories, language]);
+  const subcategories = useMemo(() => getLocalizedSubcategories(), [getLocalizedSubcategories, language]);
 
 
   const categoryOptions = Object.entries(categories).map(([key, value]) => ({
@@ -184,7 +181,6 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
           customSubcategory: undefined,
           notes: '',
         });
-        setAiSuggestions([]);
       }
       if (onSuccess && !expenseToEdit) onSuccess(); 
       
@@ -196,26 +192,27 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
     }
   };
   
-  const handleSuggestCategory = async () => {
-    if (!notesForAI || notesForAI.trim() === "") {
-      toast({ title: "Info", description: "Please enter some notes to get suggestions.", variant: "default" });
+  const handleRefineNotes = async () => {
+    const currentNotes = getValues('notes');
+    if (!currentNotes || currentNotes.trim() === "") {
+      toast({ title: t('aiRefineNotesInfoMissing'), description: t('aiRefineNotesInfoMissingDescription'), variant: "default" });
       return;
     }
-    setIsSuggesting(true);
-    setAiSuggestions([]);
+    setIsRefiningNotes(true);
     try {
-      const input: SuggestExpenseCategoriesInput = { notes: notesForAI };
-      const result = await suggestExpenseCategories(input);
-      if (result && result.categories) {
-        setAiSuggestions(result.categories);
+      const input: RefineExpenseNotesInput = { currentNotes };
+      const result = await refineExpenseNotes(input);
+      if (result && result.refinedNotes) {
+        setValue('notes', result.refinedNotes, { shouldValidate: true });
+        toast({ title: t('aiRefineNotesSuccess') });
       } else {
-         toast({ title: t('aiSuggestionError'), variant: 'destructive' });
+         toast({ title: t('aiRefineNotesError'), variant: 'destructive' });
       }
     } catch (error) {
-      console.error("AI suggestion error:", error);
-      toast({ title: t('aiSuggestionError'), variant: 'destructive' });
+      console.error("AI note refinement error:", error);
+      toast({ title: t('aiRefineNotesError'), variant: 'destructive' });
     } finally {
-      setIsSuggesting(false);
+      setIsRefiningNotes(false);
     }
   };
 
@@ -246,7 +243,7 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
                   mode="single"
                   selected={field.value instanceof Date ? field.value : undefined}
                   onSelect={(date) => {
-                    field.onChange(date);
+                    if (date) field.onChange(date);
                     setIsCalendarOpen(false);
                   }}
                   disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
@@ -359,54 +356,14 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
         />
       </div>
 
-      <Button type="button" variant="outline" onClick={handleSuggestCategory} disabled={isSuggesting} className="w-full btn-xl">
-        {isSuggesting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Lightbulb className="mr-2 h-5 w-5" />}
-        {t('addExpenseFormSuggestCategoryButton')}
+      <Button type="button" variant="outline" onClick={handleRefineNotes} disabled={isRefiningNotes} className="w-full btn-xl">
+        {isRefiningNotes ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Sparkles className="mr-2 h-5 w-5" />}
+        {t('addExpenseFormRefineNotesButton')}
       </Button>
-
-      {aiSuggestions.length > 0 && (
-        <Card>
-          <CardHeader><CardTitle className="text-xl">{t('aiSuggestionsTitle')}</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
-            {aiSuggestions.map((suggestion, index) => (
-              <Button
-                key={index}
-                variant="ghost"
-                className="w-full justify-start text-lg"
-                onClick={() => {
-                  const lowerSuggestion = suggestion.toLowerCase();
-                  let matchedCategory: CategoryKey | undefined = undefined;
-                  
-                  if (lowerSuggestion.includes('food') || lowerSuggestion.includes('grocery') || lowerSuggestion.includes('daily')) matchedCategory = 'daily';
-                  else if (lowerSuggestion.includes('card') || lowerSuggestion.includes('credit')) matchedCategory = 'creditCard';
-                  else if (lowerSuggestion.includes('gift') || lowerSuggestion.includes('special') || lowerSuggestion.includes('marriage') || lowerSuggestion.includes('birthday')) matchedCategory = 'special';
-                  
-                  if (matchedCategory) setValue('category', matchedCategory);
-
-                  if (matchedCategory === 'special') { // Use matchedCategory here
-                    const predefinedSubcategoriesLabels = subcategoryOptions.filter(opt => opt.value !== 'custom').map(opt => opt.label.toLowerCase());
-                    const matchedSub = subcategoryOptions.find(opt => opt.label.toLowerCase() === lowerSuggestion);
-
-                    if (matchedSub && predefinedSubcategoriesLabels.includes(lowerSuggestion)) {
-                      setValue('subcategory', matchedSub.value as SubcategoryKey);
-                    } else {
-                      setValue('subcategory', 'custom');
-                      setValue('customSubcategory', suggestion);
-                    }
-                  }
-                  toast({ title: `Set category/subcategory based on: ${suggestion}` });
-                }}
-              >
-                {suggestion}
-              </Button>
-            ))}
-          </CardContent>
-        </Card>
-      )}
 
       <Button type="submit" className="w-full btn-xl" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-        {expenseToEdit ? t('addExpenseFormSaveButton').replace(t('addExpenseFormSaveButton').split(" ")[0], "Update") : t('addExpenseFormSaveButton')}
+        {expenseToEdit ? t('addExpenseFormSaveButton').replace(t('addExpenseFormSaveButton').split(" ")[0], t('updateWord') || "Update") : t('addExpenseFormSaveButton')}
       </Button>
     </form>
   );

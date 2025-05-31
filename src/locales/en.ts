@@ -32,12 +32,12 @@ export const en: Translations = {
   addExpenseFormCustomSubcategoryLabel: 'Custom Subcategory Name',
   addExpenseFormNotesLabel: 'Notes',
   addExpenseFormNotesPlaceholder: 'Enter any notes for this expense...',
-  addExpenseFormSuggestCategoryButton: 'Suggest Category (AI)',
+  addExpenseFormRefineNotesButton: 'Improve Notes (AI)',
   addExpenseFormSaveButton: 'Save Expense',
+  updateWord: 'Update',
   addExpenseSuccessToast: 'Expense added successfully!',
   customSubcategoryRequiredError: 'Custom subcategory name is required.',
   pickADatePlaceholder: 'Pick a date',
-  addExpenseFormSelectedDateLabel: 'Selected Date: {{date}}',
 
 
   viewExpensesTitle: 'Monthly Summary',
@@ -104,6 +104,8 @@ export const en: Translations = {
   subcategoryCustom: 'Custom...',
 
   selectPlaceholder: 'Select an option',
-  aiSuggestionsTitle: 'AI Category Suggestions',
-  aiSuggestionError: 'Could not fetch AI suggestions.',
+  aiRefineNotesError: 'Could not refine notes with AI.',
+  aiRefineNotesSuccess: 'Notes refined by AI!',
+  aiRefineNotesInfoMissing: 'Enter some notes first!',
+  aiRefineNotesInfoMissingDescription: 'Please write some initial notes before using AI to refine them.',
 };

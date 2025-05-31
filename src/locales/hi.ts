@@ -32,12 +32,12 @@ export const hi: Translations = {
   addExpenseFormCustomSubcategoryLabel: 'कस्टम उपश्रेणी नाम',
   addExpenseFormNotesLabel: 'टिप्पणियाँ',
   addExpenseFormNotesPlaceholder: 'इस खर्च के लिए कोई टिप्पणी दर्ज करें...',
-  addExpenseFormSuggestCategoryButton: 'श्रेणी सुझाएं (AI)',
+  addExpenseFormRefineNotesButton: 'नोट्स सुधारें (AI)',
   addExpenseFormSaveButton: 'खर्च सहेजें',
+  updateWord: 'अपडेट करें',
   addExpenseSuccessToast: 'खर्च सफलतापूर्वक जोड़ा गया!',
   customSubcategoryRequiredError: 'कस्टम उपश्रेणी नाम आवश्यक है।',
   pickADatePlaceholder: 'एक तारीख चुनें',
-  addExpenseFormSelectedDateLabel: 'चयनित दिनांक: {{date}}',
 
   viewExpensesTitle: 'मासिक सारांश',
   viewExpensesNoExpenses: 'इस महीने के लिए कोई खर्च दर्ज नहीं किया गया है।',
@@ -102,6 +102,8 @@ export const hi: Translations = {
   subcategoryCustom: 'कस्टम...',
 
   selectPlaceholder: 'एक विकल्प चुनें',
-  aiSuggestionsTitle: 'AI श्रेणी सुझाव',
-  aiSuggestionError: 'AI सुझाव प्राप्त नहीं हो सके।',
+  aiRefineNotesError: 'AI से नोट्स को सुधारा नहीं जा सका।',
+  aiRefineNotesSuccess: 'AI द्वारा नोट्स सुधारे गए!',
+  aiRefineNotesInfoMissing: 'पहले कुछ नोट्स दर्ज करें!',
+  aiRefineNotesInfoMissingDescription: 'AI का उपयोग करके उन्हें सुधारने से पहले कृपया कुछ प्रारंभिक नोट्स लिखें।',
 };
