@@ -29,11 +29,13 @@ export const en: Translations = {
   addExpenseFormAmountLabel: 'Amount',
   addExpenseFormCategoryLabel: 'Category',
   addExpenseFormSubcategoryLabel: 'Subcategory',
+  addExpenseFormCustomSubcategoryLabel: 'Custom Subcategory Name',
   addExpenseFormNotesLabel: 'Notes',
   addExpenseFormNotesPlaceholder: 'Enter any notes for this expense...',
   addExpenseFormSuggestCategoryButton: 'Suggest Category (AI)',
   addExpenseFormSaveButton: 'Save Expense',
   addExpenseSuccessToast: 'Expense added successfully!',
+  customSubcategoryRequiredError: 'Custom subcategory name is required.',
 
   viewExpensesTitle: 'All Expenses',
   viewExpensesTableDateHeader: 'Date',
@@ -71,7 +73,7 @@ export const en: Translations = {
   subcategoryGift: 'Gift',
   subcategoryMarriage: 'Marriage',
   subcategoryBirthday: 'Birthday',
-  subcategoryCustom: 'Custom',
+  subcategoryCustom: 'Custom...',
 
   selectPlaceholder: 'Select an option',
   aiSuggestionsTitle: 'AI Category Suggestions',

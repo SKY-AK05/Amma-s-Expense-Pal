@@ -24,20 +24,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useSearchParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-const expenseSchema = z.object({
-  date: z.date({ required_error: 'Date is required.' }),
-  amount: z.coerce.number().positive({ message: 'Amount must be positive.' }),
-  category: z.enum(['daily', 'creditCard', 'special'], { required_error: 'Category is required.' }),
-  subcategory: z.string().optional(),
-  notes: z.string().optional(),
-});
-
-type ExpenseFormData = z.infer<typeof expenseSchema>;
-
-interface ExpenseFormProps {
-  onSuccess?: () => void;
-}
-
 const dateLocales: Record<Language, Locale> = {
   en: enUS,
   ta: taDateLocale,
@@ -50,17 +36,37 @@ const categoryIcons: Record<CategoryKey, React.ElementType> = {
   special: Gift,
 };
 
-const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
+const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const { addExpense, updateExpense, getExpenseById } = useExpenses();
   const { t, getLocalizedCategories, getLocalizedSubcategories, language } = useI18n();
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const expenseSchema = z.object({
+    date: z.date({ required_error: t('addExpenseFormDateLabel') + ' is required.' }),
+    amount: z.coerce.number().positive({ message: t('addExpenseFormAmountLabel') + ' must be positive.' }),
+    category: z.enum(['daily', 'creditCard', 'special'], { required_error: t('addExpenseFormCategoryLabel') + ' is required.' }),
+    subcategory: z.string().optional(),
+    customSubcategory: z.string().optional(),
+    notes: z.string().optional(),
+  }).superRefine((data, ctx) => {
+    if (data.category === 'special' && data.subcategory === 'custom') {
+      if (!data.customSubcategory || data.customSubcategory.trim() === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t('customSubcategoryRequiredError'),
+          path: ['customSubcategory'],
+        });
+      }
+    }
+  });
+  
+  type ExpenseFormData = z.infer<typeof expenseSchema>;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const [isSuggesting, setIsSuggesting] = useState(false);
-  
   const [expenseToEdit, setExpenseToEdit] = useState<Expense | undefined>(undefined);
 
   const initialCategoryFromQuery = useMemo(() => {
@@ -81,14 +87,25 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
     }
   }, [searchParams, getExpenseById]);
 
-
   const defaultValues = useMemo(() => {
     if (expenseToEdit) {
+      const isPredefinedSubcategory = expenseToEdit.subcategory && 
+        ['gift', 'marriage', 'birthday'].includes(expenseToEdit.subcategory as SubcategoryKey);
+      
+      const subCatValue = expenseToEdit.category === 'special' 
+        ? (isPredefinedSubcategory ? expenseToEdit.subcategory : 'custom')
+        : expenseToEdit.subcategory;
+      
+      const customSubCatValue = expenseToEdit.category === 'special' && !isPredefinedSubcategory
+        ? expenseToEdit.subcategory
+        : undefined;
+
       return {
         date: parseISO(expenseToEdit.date),
         amount: expenseToEdit.amount,
         category: expenseToEdit.category,
-        subcategory: expenseToEdit.subcategory,
+        subcategory: subCatValue,
+        customSubcategory: customSubCatValue,
         notes: expenseToEdit.notes || '',
       };
     }
@@ -97,6 +114,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
       amount: undefined,
       category: initialCategoryFromQuery,
       subcategory: undefined,
+      customSubcategory: undefined,
       notes: '',
     };
   }, [expenseToEdit, initialCategoryFromQuery]);
@@ -110,38 +128,44 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-
   const selectedCategory = watch('category');
+  const selectedSubcategory = watch('subcategory');
   const notesForAI = watch('notes');
 
   const categories = getLocalizedCategories();
-  const subcategories = getLocalizedSubcategories();
+  const subcategories = getLocalizedSubcategories(); // Includes 'custom'
 
   const categoryOptions = Object.entries(categories).map(([key, value]) => ({
     value: key as CategoryKey,
     label: value,
     Icon: categoryIcons[key as CategoryKey],
   }));
+  
+  const subcategoryOptions = Object.entries(subcategories).map(([key, value]) => ({
+    value: key as SubcategoryKey, // 'custom' is a valid SubcategoryKey
+    label: value,
+  }));
 
-  const subcategoryOptions = Object.entries(subcategories)
-    .filter(([key]) => key !== 'custom') 
-    .map(([key, value]) => ({
-      value: key as SubcategoryKey,
-      label: value,
-    }));
 
   const onSubmit = (data: ExpenseFormData) => {
     setIsSubmitting(true);
+    let finalSubcategory = data.subcategory;
+    if (data.category === 'special' && data.subcategory === 'custom') {
+      finalSubcategory = data.customSubcategory;
+    }
+
     const expensePayload = {
-      ...data,
       date: data.date.toISOString(),
-      amount: Number(data.amount)
+      amount: Number(data.amount),
+      category: data.category,
+      subcategory: finalSubcategory,
+      notes: data.notes,
     };
 
     try {
       if (expenseToEdit) {
         updateExpense(expenseToEdit.id, expensePayload);
-        toast({ title: t('addExpenseSuccessToast').replace('added', 'updated') }); 
+        toast({ title: t('addExpenseSuccessToast').replace(t('addExpenseSuccessToast').split(" ")[1], t('addExpenseFormSaveButton').split(" ")[1] || "updated" )}); 
         router.push('/view-expenses'); 
       } else {
         addExpense(expensePayload);
@@ -155,6 +179,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
           amount: undefined,
           category: resetCategory,
           subcategory: undefined,
+          customSubcategory: undefined,
           notes: '',
         });
         setAiSuggestions([]);
@@ -239,7 +264,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
         <label className="block text-lg font-medium mb-1">{t('addExpenseFormCategoryLabel')}</label>
         <div className="grid grid-cols-3 gap-2">
           {categoryOptions.map((opt) => {
-            const Icon = opt.Icon || Coffee; // Default to Coffee if no icon
+            const Icon = opt.Icon || Coffee; 
             return (
             <Button
               key={opt.value}
@@ -248,7 +273,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
               onClick={() => {
                 setValue('category', opt.value, { shouldValidate: true });
                 if (opt.value !== 'special') {
-                  setValue('subcategory', undefined); // Clear subcategory if not 'special'
+                  setValue('subcategory', undefined); 
+                  setValue('customSubcategory', undefined);
                 }
               }}
               className={cn("btn-xl justify-start text-left h-auto py-3", 
@@ -265,25 +291,47 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
       </div>
 
       {selectedCategory === 'special' && (
-        <div>
-          <label htmlFor="subcategory" className="block text-lg font-medium mb-1">{t('addExpenseFormSubcategoryLabel')}</label>
-          <Controller
-            name="subcategory"
-            control={control}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value || ''}>
-                <SelectTrigger className="input-xl select-trigger-xl">
-                  <SelectValue placeholder={t('selectPlaceholder')} />
-                </SelectTrigger>
-                <SelectContent className="select-content-xl">
-                  {subcategoryOptions.map(opt => (
-                    <SelectItem key={opt.value} value={opt.value} className="select-item-xl">{opt.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
+        <>
+          <div>
+            <label htmlFor="subcategory" className="block text-lg font-medium mb-1">{t('addExpenseFormSubcategoryLabel')}</label>
+            <Controller
+              name="subcategory"
+              control={control}
+              render={({ field }) => (
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    if (value !== 'custom') {
+                      setValue('customSubcategory', undefined); // Clear custom input if not 'custom'
+                    }
+                  }} 
+                  value={field.value || ''}
+                >
+                  <SelectTrigger className="input-xl select-trigger-xl">
+                    <SelectValue placeholder={t('selectPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent className="select-content-xl">
+                    {subcategoryOptions.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value} className="select-item-xl">{opt.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+
+          {selectedSubcategory === 'custom' && (
+            <div>
+              <label htmlFor="customSubcategory" className="block text-lg font-medium mb-1">{t('addExpenseFormCustomSubcategoryLabel')}</label>
+              <Controller
+                name="customSubcategory"
+                control={control}
+                render={({ field }) => <Input {...field} type="text" placeholder={t('addExpenseFormCustomSubcategoryLabel')} className="input-xl" value={field.value || ''} />}
+              />
+              {errors.customSubcategory && <p className="text-destructive mt-1">{errors.customSubcategory.message}</p>}
+            </div>
+          )}
+        </>
       )}
       
       <div>
@@ -319,15 +367,24 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
                 onClick={() => {
                   const lowerSuggestion = suggestion.toLowerCase();
                   let matchedCategory: CategoryKey | undefined = undefined;
+                  // Basic matching for main category
                   if (lowerSuggestion.includes('food') || lowerSuggestion.includes('grocery') || lowerSuggestion.includes('daily')) matchedCategory = 'daily';
                   else if (lowerSuggestion.includes('card') || lowerSuggestion.includes('credit')) matchedCategory = 'creditCard';
                   else if (lowerSuggestion.includes('gift') || lowerSuggestion.includes('special') || lowerSuggestion.includes('marriage') || lowerSuggestion.includes('birthday')) matchedCategory = 'special';
                   
                   if (matchedCategory) setValue('category', matchedCategory);
-                  else {
-                     if (selectedCategory === 'special') setValue('subcategory', suggestion);
+
+                  if (selectedCategory === 'special') {
+                    const predefinedSubcategories = subcategoryOptions.filter(opt => opt.value !== 'custom').map(opt => opt.label.toLowerCase());
+                    if (predefinedSubcategories.includes(lowerSuggestion)) {
+                      const matchedSub = subcategoryOptions.find(opt => opt.label.toLowerCase() === lowerSuggestion);
+                      if (matchedSub) setValue('subcategory', matchedSub.value as SubcategoryKey);
+                    } else {
+                      setValue('subcategory', 'custom');
+                      setValue('customSubcategory', suggestion);
+                    }
                   }
-                  toast({ title: `Set category based on: ${suggestion}` });
+                  toast({ title: `Set category/subcategory based on: ${suggestion}` });
                 }}
               >
                 {suggestion}
@@ -339,7 +396,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
 
       <Button type="submit" className="w-full btn-xl" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-        {expenseToEdit ? t('addExpenseFormSaveButton').replace("Save", "Update") : t('addExpenseFormSaveButton')}
+        {expenseToEdit ? t('addExpenseFormSaveButton').replace(t('addExpenseFormSaveButton').split(" ")[0], "Update") : t('addExpenseFormSaveButton')}
       </Button>
     </form>
   );

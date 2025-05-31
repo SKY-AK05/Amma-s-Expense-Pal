@@ -29,11 +29,13 @@ export const hi: Translations = {
   addExpenseFormAmountLabel: 'राशि',
   addExpenseFormCategoryLabel: 'श्रेणी',
   addExpenseFormSubcategoryLabel: 'उपश्रेणी',
+  addExpenseFormCustomSubcategoryLabel: 'कस्टम उपश्रेणी नाम',
   addExpenseFormNotesLabel: 'टिप्पणियाँ',
   addExpenseFormNotesPlaceholder: 'इस खर्च के लिए कोई टिप्पणी दर्ज करें...',
   addExpenseFormSuggestCategoryButton: 'श्रेणी सुझाएं (AI)',
   addExpenseFormSaveButton: 'खर्च सहेजें',
   addExpenseSuccessToast: 'खर्च सफलतापूर्वक जोड़ा गया!',
+  customSubcategoryRequiredError: 'कस्टम उपश्रेणी नाम आवश्यक है।',
 
   viewExpensesTitle: 'सभी खर्च',
   viewExpensesTableDateHeader: 'दिनांक',
@@ -71,7 +73,7 @@ export const hi: Translations = {
   subcategoryGift: 'उपहार',
   subcategoryMarriage: 'शादी',
   subcategoryBirthday: 'जन्मदिन',
-  subcategoryCustom: 'कस्टम',
+  subcategoryCustom: 'कस्टम...',
 
   selectPlaceholder: 'एक विकल्प चुनें',
   aiSuggestionsTitle: 'AI श्रेणी सुझाव',

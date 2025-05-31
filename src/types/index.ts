@@ -52,11 +52,13 @@ export interface LocaleData {
   addExpenseFormAmountLabel: string;
   addExpenseFormCategoryLabel: string;
   addExpenseFormSubcategoryLabel: string;
+  addExpenseFormCustomSubcategoryLabel: string;
   addExpenseFormNotesLabel: string;
   addExpenseFormNotesPlaceholder: string;
   addExpenseFormSuggestCategoryButton: string;
   addExpenseFormSaveButton: string;
   addExpenseSuccessToast: string;
+  customSubcategoryRequiredError: string;
 
   viewExpensesTitle: string;
   viewExpensesTableDateHeader: string;

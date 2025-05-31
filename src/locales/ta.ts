@@ -29,11 +29,13 @@ export const ta: Translations = {
   addExpenseFormAmountLabel: 'தொகை',
   addExpenseFormCategoryLabel: 'வகை',
   addExpenseFormSubcategoryLabel: 'துணை வகை',
+  addExpenseFormCustomSubcategoryLabel: 'விருப்ப துணை வகை பெயர்',
   addExpenseFormNotesLabel: 'குறிப்புகள்',
   addExpenseFormNotesPlaceholder: 'இந்த செலவிற்கான குறிப்புகளை உள்ளிடவும்...',
   addExpenseFormSuggestCategoryButton: 'வகை பரிந்துரை (AI)',
   addExpenseFormSaveButton: 'செலவை சேமி',
   addExpenseSuccessToast: 'செலவு வெற்றிகரமாக சேர்க்கப்பட்டது!',
+  customSubcategoryRequiredError: 'விருப்ப துணை வகை பெயர் தேவை.',
 
   viewExpensesTitle: 'அனைத்து செலவுகளும்',
   viewExpensesTableDateHeader: 'தேதி',
@@ -71,7 +73,7 @@ export const ta: Translations = {
   subcategoryGift: 'பரிசு',
   subcategoryMarriage: 'திருமணம்',
   subcategoryBirthday: 'பிறந்தநாள்',
-  subcategoryCustom: 'விருப்பம்',
+  subcategoryCustom: 'விருப்பம்...',
 
   selectPlaceholder: 'ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும்',
   aiSuggestionsTitle: 'AI வகை பரிந்துரைகள்',
