@@ -36,7 +36,7 @@ export const en: Translations = {
   addExpenseFormSaveButton: 'Save Expense',
   addExpenseSuccessToast: 'Expense added successfully!',
   customSubcategoryRequiredError: 'Custom subcategory name is required.',
-  addExpenseFormSelectedDateLabel: 'Selected date: {{date}}',
+  pickADatePlaceholder: 'Pick a date',
 
   viewExpensesTitle: 'Monthly Summary',
   viewExpensesNoExpenses: 'No expenses recorded for this month.',

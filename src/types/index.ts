@@ -57,7 +57,7 @@ export interface LocaleData {
   addExpenseFormSaveButton: string;
   addExpenseSuccessToast: string;
   customSubcategoryRequiredError: string;
-  addExpenseFormSelectedDateLabel: string; 
+  pickADatePlaceholder: string;
 
   viewExpensesTitle: string; 
   viewExpensesNoExpenses: string;

@@ -10,10 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { useExpenses } from '@/hooks/use-expenses';
 import { useI18n } from '@/contexts/i18n-context';
 import { useToast } from '@/hooks/use-toast';
-import { Lightbulb, Loader2, CreditCard, Gift, Coffee } from 'lucide-react';
+import { Lightbulb, Loader2, CreditCard, Gift, Coffee, CalendarIcon } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import type { Locale } from 'date-fns';
 import { enUS, ta as taDateLocale, hi as hiDateLocale } from 'date-fns/locale';
@@ -67,6 +68,7 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [expenseToEdit, setExpenseToEdit] = useState<Expense | undefined>(undefined);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const initialCategoryFromQuery = useMemo(() => {
     const category = searchParams.get('category');
@@ -220,29 +222,41 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label htmlFor="date-calendar" className="block text-lg font-medium mb-1">{t('addExpenseFormDateLabel')}</label>
+        <label htmlFor="date-popover-trigger" className="block text-lg font-medium mb-1">{t('addExpenseFormDateLabel')}</label>
         <Controller
           name="date"
           control={control}
           render={({ field }) => (
-            <>
-              <Calendar
-                mode="single"
-                selected={field.value instanceof Date ? field.value : undefined}
-                onSelect={field.onChange}
-                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                className="rounded-md border shadow-sm mx-auto"
-                initialFocus
-              />
-              {field.value && (
-                <p className="mt-2 text-sm text-muted-foreground text-center">
-                  {t('addExpenseFormSelectedDateLabel', { date: format(field.value, 'PPP', { locale: dateLocales[language] }) })}
-                </p>
-              )}
-            </>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  id="date-popover-trigger"
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal input-xl",
+                    !field.value && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-5 w-5" />
+                  {field.value ? format(field.value, 'PPP', { locale: dateLocales[language] }) : <span>{t('pickADatePlaceholder')}</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={field.value instanceof Date ? field.value : undefined}
+                  onSelect={(date) => {
+                    field.onChange(date);
+                    setIsCalendarOpen(false);
+                  }}
+                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           )}
         />
-        {errors.date && <p className="text-destructive mt-1 text-center">{errors.date.message}</p>}
+        {errors.date && <p className="text-destructive mt-1">{errors.date.message}</p>}
       </div>
 
       <div>
@@ -399,4 +413,3 @@ const ExpenseForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
 };
 
 export default ExpenseForm;
-

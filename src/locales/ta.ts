@@ -36,7 +36,7 @@ export const ta: Translations = {
   addExpenseFormSaveButton: 'செலவை சேமி',
   addExpenseSuccessToast: 'செலவு வெற்றிகரமாக சேர்க்கப்பட்டது!',
   customSubcategoryRequiredError: 'விருப்ப துணை வகை பெயர் தேவை.',
-  addExpenseFormSelectedDateLabel: 'தேர்ந்தெடுக்கப்பட்ட தேதி: {{date}}',
+  pickADatePlaceholder: 'தேதியைத் தேர்ந்தெடுக்கவும்',
 
   viewExpensesTitle: 'மாதாந்திர சுருக்கம்',
   viewExpensesNoExpenses: 'இந்த மாதத்திற்கு எந்த செலவும் பதிவு செய்யப்படவில்லை.',

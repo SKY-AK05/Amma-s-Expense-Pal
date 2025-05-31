@@ -36,7 +36,7 @@ export const hi: Translations = {
   addExpenseFormSaveButton: 'खर्च सहेजें',
   addExpenseSuccessToast: 'खर्च सफलतापूर्वक जोड़ा गया!',
   customSubcategoryRequiredError: 'कस्टम उपश्रेणी नाम आवश्यक है।',
-  addExpenseFormSelectedDateLabel: 'चयनित दिनांक: {{date}}',
+  pickADatePlaceholder: 'एक तारीख चुनें',
 
   viewExpensesTitle: 'मासिक सारांश',
   viewExpensesNoExpenses: 'इस महीने के लिए कोई खर्च दर्ज नहीं किया गया है।',
