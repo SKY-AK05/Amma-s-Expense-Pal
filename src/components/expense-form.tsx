@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -15,7 +16,9 @@ import { useI18n } from '@/contexts/i18n-context';
 import { useToast } from '@/hooks/use-toast';
 import { CalendarIcon, Lightbulb, Loader2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import type { Expense, CategoryKey, SubcategoryKey } from '@/types';
+import type { Locale } from 'date-fns';
+import { enUS, ta as taDateLocale, hi as hiDateLocale } from 'date-fns/locale';
+import type { Expense, CategoryKey, SubcategoryKey, Language } from '@/types';
 import { suggestExpenseCategories, SuggestExpenseCategoriesInput } from '@/ai/flows/suggest-expense-categories';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 
@@ -33,6 +36,12 @@ interface ExpenseFormProps {
   expenseToEdit?: Expense;
   onSuccess?: () => void;
 }
+
+const dateLocales: Record<Language, Locale> = {
+  en: enUS,
+  ta: taDateLocale,
+  hi: hiDateLocale,
+};
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) => {
   const { addExpense, updateExpense } = useExpenses();
@@ -154,7 +163,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
                   className="w-full justify-start text-left font-normal input-xl"
                 >
                   <CalendarIcon className="mr-2 h-5 w-5" />
-                  {field.value ? format(field.value, 'PPP', { locale: language === 'ta' ? require('date-fns/locale/ta') : language === 'hi' ? require('date-fns/locale/hi') : require('date-fns/locale/en-US') }) : <span>Pick a date</span>}
+                  {field.value ? format(field.value, 'PPP', { locale: dateLocales[language] }) : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -287,3 +296,5 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expenseToEdit, onSuccess }) =
 };
 
 export default ExpenseForm;
+
+    

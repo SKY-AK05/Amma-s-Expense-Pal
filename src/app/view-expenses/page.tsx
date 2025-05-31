@@ -1,9 +1,10 @@
+
 'use client';
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { useExpenses } from '@/hooks/use-expenses';
 import { useI18n } from '@/contexts/i18n-context';
-import type { Expense, CategoryKey } from '@/types';
+import type { Expense, CategoryKey, Language } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,12 +12,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Edit, Trash2, ArrowUpDown } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import type { Locale } from 'date-fns';
+import { enUS, ta as taDateLocale, hi as hiDateLocale } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import { exportToCsv } from '@/utils/export';
 import { useToast } from '@/hooks/use-toast';
 
 type SortKey = 'date' | 'amount';
 type SortOrder = 'asc' | 'desc';
+
+const dateLocales: Record<Language, Locale> = {
+  en: enUS,
+  ta: taDateLocale,
+  hi: hiDateLocale,
+};
 
 export default function ViewExpensesPage() {
   const { expenses, deleteExpense } = useExpenses();
@@ -139,7 +148,7 @@ export default function ViewExpensesPage() {
                 <TableBody>
                   {filteredAndSortedExpenses.map((expense) => (
                     <TableRow key={expense.id}>
-                      <TableCell>{format(parseISO(expense.date), 'PP', { locale: language === 'ta' ? require('date-fns/locale/ta') : language === 'hi' ? require('date-fns/locale/hi') : require('date-fns/locale/en-US') })}</TableCell>
+                      <TableCell>{format(parseISO(expense.date), 'PP', { locale: dateLocales[language] })}</TableCell>
                       <TableCell className="text-right font-medium">{new Intl.NumberFormat(undefined, { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(expense.amount)}</TableCell>
                       <TableCell>{categoryDisplay(expense.category)}</TableCell>
                       <TableCell>{subcategoryDisplay(expense.subcategory)}</TableCell>
@@ -184,3 +193,5 @@ export default function ViewExpensesPage() {
     </div>
   );
 }
+
+    
