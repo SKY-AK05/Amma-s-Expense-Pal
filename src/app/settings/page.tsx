@@ -46,9 +46,11 @@ export default function SettingsPage() {
 
   const categoryDisplay = (categoryKey: CategoryKey) => localizedCategories[categoryKey] || categoryKey;
   const subcategoryDisplay = (subcategoryKey: SubcategoryKey | string) => {
-    if (['gift', 'marriage', 'birthday', 'custom'].includes(subcategoryKey as SubcategoryKey)) {
+    // Check if the subcategoryKey is one of the predefined keys that have translations
+    if (Object.prototype.hasOwnProperty.call(localizedSubcategories, subcategoryKey)) {
        return localizedSubcategories[subcategoryKey as SubcategoryKey] || subcategoryKey;
     }
+    // Otherwise, it's a custom string, return as is
     return subcategoryKey;
   };
 
@@ -83,9 +85,11 @@ export default function SettingsPage() {
     }
 
     const doc = new jsPDF();
+    let localYPos = 20; // Localize yPos
+
     doc.setFontSize(18);
-    doc.text(t('appName') + " - " + t('settingsExportAllDataLabel'), 14, 20);
-    yPos = 30;
+    doc.text(t('appName') + " - " + t('settingsExportAllDataLabel'), 14, localYPos);
+    localYPos += 10;
 
     const transactionsTableBody = expenses.map(exp => [
       format(parseISO(exp.date), 'yyyy-MM-dd'),
@@ -96,7 +100,7 @@ export default function SettingsPage() {
     ]);
 
     (doc as any).autoTable({
-      startY: yPos,
+      startY: localYPos,
       head: [[t('addExpenseFormDateLabel'), t('addExpenseFormCategoryLabel'), t('addExpenseFormSubcategoryLabel'), t('addExpenseFormAmountLabel'), t('addExpenseFormNotesLabel')]],
       body: transactionsTableBody,
       theme: 'grid',
@@ -116,8 +120,6 @@ export default function SettingsPage() {
     toast({ title: t('settingsExportAllSuccessTitle'), description: t('settingsExportAllPdfSuccessMessage') });
   };
   
-  let yPos = 20; // for PDF generation
-
   const handleShareApp = async () => {
     const shareData = {
       title: t('appName'),
@@ -128,7 +130,6 @@ export default function SettingsPage() {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        // Fallback for browsers that don't support Web Share API
         navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
         toast({ title: t('settingsShareAppLabel'), description: t('settingsShareAppError', {url: shareData.url}) });
       }
