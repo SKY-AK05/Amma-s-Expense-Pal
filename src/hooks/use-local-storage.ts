@@ -1,42 +1,30 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
 
 function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] {
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
-      return initialValue;
-    }
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error('Error reading localStorage key “' + key + '”: ', error);
-      return initialValue;
-    }
-  });
+  const [storedValue, setStoredValue] = useState<T>(initialValue);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    const loadStoredValue = async () => {
       try {
-        const item = window.localStorage.getItem(key);
+        const item = await AsyncStorage.getItem(key);
         if (item) {
           setStoredValue(JSON.parse(item));
         }
       } catch (error) {
-         console.error('Error reading localStorage key “' + key + '” on mount/hydration: ', error);
+        console.error('Error reading from AsyncStorage:', error);
       }
-    }
+    };
+    loadStoredValue();
   }, [key]);
 
-
-  const setValue = (value: T | ((val: T) => T)) => {
+  const setValue = async (value: T | ((val: T) => T)) => {
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      }
+      await AsyncStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
-      console.error('Error setting localStorage key “' + key + '”: ', error);
+      console.error('Error saving to AsyncStorage:', error);
     }
   };
 
